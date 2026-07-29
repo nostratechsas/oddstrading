@@ -1,0 +1,277 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   TIER 1 — PRIMITIVES  (`--raw-*`)
+   Raw literal values. The only tier allowed to contain a hex/px/ms literal.
+   Never referenced in markup, never bound into @theme. Rename freely.
+   Grammar: --raw-<category>-<name>[-<shade>]
+   See obsidian/frontend/design-system.md → "Token naming convention".
+   --------------------------------------------------------------------------- */
+:root {
+  --raw-color-white: #ffffff;
+  --raw-color-paper-50: #f4f4f2;
+  --raw-color-neutral-100: #ededed;
+  --raw-color-neutral-900: #171717;
+  --raw-color-neutral-950: #0a0a0a;
+
+  /* Brand ramp — sampled from the OddsTrading logotype
+     (img/src/logos/OddsTrading_logo.png): the mark runs azure → teal → leaf,
+     the wordmark ends on mint. Every hue of the mark is represented here. */
+  --raw-color-brand-azure-600: #1478c0;
+  --raw-color-brand-azure-500: #1b8fd6;
+  --raw-color-brand-azure-300: #6fd0ff;
+  --raw-color-brand-teal-500: #17bfb4;
+  --raw-color-brand-teal-300: #8ff7d2;
+  --raw-color-brand-mint-500: #1fd68c;
+  --raw-color-brand-mint-300: #7be8a4;
+  --raw-color-brand-leaf-500: #45cc6e;
+
+  /* Brand neutrals — the OLED canvas the palette is tuned against. */
+  --raw-color-brand-ink-950: #050505;
+  --raw-color-brand-ink-900: #0a0a0c;
+  --raw-color-brand-ink-800: #0e0e11;
+
+  /* Alpha ramps — glass surfaces, hairlines and muted copy. */
+  --raw-color-alpha-white-03: rgb(255 255 255 / 0.03);
+  --raw-color-alpha-white-06: rgb(255 255 255 / 0.06);
+  --raw-color-alpha-white-10: rgb(255 255 255 / 0.1);
+  --raw-color-alpha-white-18: rgb(255 255 255 / 0.18);
+  --raw-color-alpha-paper-40: rgb(244 244 242 / 0.4);
+  --raw-color-alpha-paper-58: rgb(244 244 242 / 0.58);
+  --raw-color-alpha-mint-14: rgb(31 214 140 / 0.14);
+  --raw-color-alpha-mint-28: rgb(31 214 140 / 0.28);
+  --raw-color-alpha-ink-70: rgb(9 9 11 / 0.7);
+
+  /* Signals — line moved up / line moved down in the odds feed. */
+  --raw-color-signal-up-500: #1fd68c;
+  --raw-color-signal-down-500: #ff7a7a;
+  /* Fourth data-series accent; the only palette hue not in the logotype,
+     reserved for the recreational-bookmaker series in the live board. */
+  --raw-color-accent-amber-500: #ffb020;
+
+  --raw-duration-fast: 150ms;
+  --raw-duration-normal: 250ms;
+  --raw-duration-slow: 500ms;
+
+  --raw-radius-card: 2rem;
+  /* Concentric inner radius: outer radius − the bezel's 0.375rem padding. */
+  --raw-radius-card-inner: 1.625rem;
+  --raw-radius-control: 0.875rem;
+  --raw-radius-pill: 62.4375rem;
+
+  --raw-container-shell: 77.5rem;
+  --raw-text-display: clamp(2.75rem, 6.2vw, 4.9rem);
+  --raw-text-headline: clamp(2.1rem, 4.4vw, 3.4rem);
+  --raw-leading-display: 1.1;
+  --raw-ease-entrance: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   TIER 2 — SEMANTIC  (role names, no namespace prefix)
+   Purpose, not appearance. Always `var(--raw-*)` — never a literal.
+   This is the themeable layer: dark mode overrides happen HERE, which is why
+   these are separate from the @theme bindings below (see the note there).
+   Grammar: --<role>[-<variant>][-<state>]
+   --------------------------------------------------------------------------- */
+:root {
+  --background: var(--raw-color-brand-ink-950);
+  --background-elevated: var(--raw-color-brand-ink-900);
+  --background-overlay: var(--raw-color-alpha-ink-70);
+
+  --foreground: var(--raw-color-paper-50);
+  --foreground-muted: var(--raw-color-alpha-paper-58);
+  --foreground-subtle: var(--raw-color-alpha-paper-40);
+
+  --surface-glass: var(--raw-color-alpha-white-03);
+  --surface-raised: var(--raw-color-alpha-white-06);
+  --surface-strong: var(--raw-color-alpha-white-10);
+
+  --border-hairline: var(--raw-color-alpha-white-06);
+  --border-hairline-strong: var(--raw-color-alpha-white-10);
+
+  --action-primary: var(--raw-color-brand-mint-500);
+  --action-primary-hover: var(--raw-color-brand-mint-300);
+  --action-primary-foreground: var(--raw-color-brand-ink-950);
+  --action-neutral: var(--raw-color-alpha-white-06);
+  --action-neutral-hover: var(--raw-color-alpha-white-18);
+
+  /* The brand gradient, in reading order across the logotype. */
+  --brand-gradient-start: var(--raw-color-brand-azure-500);
+  --brand-gradient-middle: var(--raw-color-brand-teal-500);
+  --brand-gradient-end: var(--raw-color-brand-leaf-500);
+  --brand-gradient-tail: var(--raw-color-brand-mint-300);
+
+  /* Categorical accents — one per bookmaker series in the live odds board. */
+  --data-accent-primary: var(--raw-color-brand-mint-500);
+  --data-accent-secondary: var(--raw-color-brand-azure-500);
+  --data-accent-tertiary: var(--raw-color-brand-teal-500);
+  --data-accent-quaternary: var(--raw-color-accent-amber-500);
+
+  --accent-soft: var(--raw-color-alpha-mint-14);
+  --accent-soft-strong: var(--raw-color-alpha-mint-28);
+  --accent-emphasis: var(--raw-color-brand-mint-500);
+  --accent-code-key: var(--raw-color-brand-azure-300);
+  --accent-code-string: var(--raw-color-brand-teal-300);
+
+  --signal-up: var(--raw-color-signal-up-500);
+  --signal-down: var(--raw-color-signal-down-500);
+
+  --duration-fast: var(--raw-duration-fast);
+  --duration-normal: var(--raw-duration-normal);
+  --duration-slow: var(--raw-duration-slow);
+}
+
+/* ---------------------------------------------------------------------------
+   THEME BINDINGS — map semantic tokens into Tailwind namespaces.
+   Every entry is exactly `--<tw-namespace>-<role>: var(--<role>)`.
+   `inline` is required: it inlines the var() into each utility, so any runtime
+   override of the Tier 2 tokens above cascades.
+
+   Only these namespaces generate utilities (verified against tailwindcss
+   v4.3.3): --color-* --spacing-* --radius-* --leading-* --tracking-* --text-*
+   --font-* --ease-* --breakpoint-* --container-* --shadow-* --blur-* --animate-*
+   NOTE: there is NO --duration-* namespace in v4 — `duration-fast` compiles to
+   nothing. Durations stay Tier 2 only and are used as duration-[var(--duration-fast)].
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
+  --color-background-overlay: var(--background-overlay);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+
+  --color-surface-glass: var(--surface-glass);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-strong: var(--surface-strong);
+
+  --color-border-hairline: var(--border-hairline);
+  --color-border-hairline-strong: var(--border-hairline-strong);
+
+  --color-action-primary: var(--action-primary);
+  --color-action-primary-hover: var(--action-primary-hover);
+  --color-action-primary-foreground: var(--action-primary-foreground);
+  --color-action-neutral: var(--action-neutral);
+  --color-action-neutral-hover: var(--action-neutral-hover);
+
+  --color-brand-gradient-start: var(--brand-gradient-start);
+  --color-brand-gradient-middle: var(--brand-gradient-middle);
+  --color-brand-gradient-end: var(--brand-gradient-end);
+  --color-brand-gradient-tail: var(--brand-gradient-tail);
+
+  --color-data-accent-primary: var(--data-accent-primary);
+  --color-data-accent-secondary: var(--data-accent-secondary);
+  --color-data-accent-tertiary: var(--data-accent-tertiary);
+  --color-data-accent-quaternary: var(--data-accent-quaternary);
+
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-strong: var(--accent-soft-strong);
+  --color-accent-emphasis: var(--accent-emphasis);
+  --color-accent-code-key: var(--accent-code-key);
+  --color-accent-code-string: var(--accent-code-string);
+
+  --color-signal-up: var(--signal-up);
+  --color-signal-down: var(--signal-down);
+
+  --font-sans: var(--font-onest);
+
+  /* Leading floor for clipped TextEngine reveals — see
+     obsidian/frontend/text-engine.md → "Alignment & line-height". */
+  --leading-display: var(--raw-leading-display);
+
+  --ease-entrance: var(--raw-ease-entrance);
+
+  /* TIER 3 — component tokens. Kept to the values that must stay identical
+     across components that cannot import each other: the concentric radii of
+     the double-bezel shell (Bezel) and everything nested inside it, the pill
+     radius shared by Button/Eyebrow/Pill, and the page shell width. */
+  --radius-card: var(--raw-radius-card);
+  --radius-card-inner: var(--raw-radius-card-inner);
+  --radius-control: var(--raw-radius-control);
+  --radius-pill: var(--raw-radius-pill);
+  --container-shell: var(--raw-container-shell);
+  --text-display: var(--raw-text-display);
+  --text-headline: var(--raw-text-headline);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+@layer base {
+  /* Adaptive scaling grid — scales the root font-size with the viewport so a
+     rem-based layout stays proportional. Each breakpoint divides FONT_BASE
+     (16px) by the design base width its range was laid out at:
+       font-size: 16 * 100 / baseWidth  (vw)
+     Above 1920px the AdaptiveGrid component takes over (scale-up).
+     Keep in sync with src/components/common/grid/grid.config.ts. */
+  html {
+    font-size: 16px;
+  }
+
+  @media (max-width: 1920px) {
+    html {
+      font-size: 0.833333vw; /* 16 * 100 / 1920 */
+    }
+  }
+
+  @media (max-width: 1440px) {
+    html {
+      font-size: 1.111111vw; /* 16 * 100 / 1440 */
+    }
+  }
+
+  @media (max-width: 1024px) {
+    html {
+      font-size: 1.5625vw; /* 16 * 100 / 1024 */
+    }
+  }
+
+  @media (max-width: 640px) {
+    html {
+      font-size: 4.444444vw; /* 16 * 100 / 360 */
+    }
+  }
+
+  ::selection {
+    background: var(--accent-emphasis);
+    color: var(--action-primary-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-emphasis);
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+}
+
+@layer components {
+  /* Pseudo-element only: the checkmark on TickList rows. Utilities cannot
+     express a rotated two-border tick, so this is a genuine ADR-0012 exception. */
+  .tick-marker::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.52em;
+    width: 0.625rem;
+    height: 0.34375rem;
+    border-left: 1.3px solid var(--accent-emphasis);
+    border-bottom: 1.3px solid var(--accent-emphasis);
+    transform: rotate(-45deg);
+  }
+
+  /* Third-party DOM override: `<details>` ships a default marker in every
+     engine and only a pseudo-element selector can remove it. */
+  .accordion-item > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion-item > summary {
+    list-style: none;
+  }
+}
