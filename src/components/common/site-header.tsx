@@ -7,19 +7,20 @@
 "use client";
 
 import { animated, useSpring, useTrail } from "@react-spring/web";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { BrandLockup } from "@/components/common/brand-lockup";
 import { ActionLink } from "@/components/ui/action-link";
 
 export interface SiteHeaderProps {
   links: readonly { href: string; label: string }[];
-  logo: string;
+  mark: string;
+  wordmark: string;
   logoAlt: string;
 }
 
-export const SiteHeader = ({ links, logo, logoAlt }: SiteHeaderProps) => {
+export const SiteHeader = ({ links, mark, wordmark, logoAlt }: SiteHeaderProps) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -57,10 +58,10 @@ export const SiteHeader = ({ links, logo, logoAlt }: SiteHeaderProps) => {
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 flex justify-center px-5 pt-4 md:px-10">
         <nav
           aria-label="Principal"
-          className="pointer-events-auto flex w-full max-w-shell items-center gap-6 rounded-pill border border-border-hairline bg-background-overlay py-2 pr-2 pl-5 shadow-[inset_0_1px_0_var(--surface-strong)] backdrop-blur-2xl"
+          className="pointer-events-auto flex w-full max-w-shell items-center gap-6 rounded-pill border border-border-hairline bg-background-overlay py-3 pr-3 pl-6 shadow-[inset_0_1px_0_var(--surface-strong)] backdrop-blur-2xl"
         >
           <Link href="/" className="flex shrink-0 items-center" aria-label={`${logoAlt}, inicio`}>
-            <Image src={logo} alt={logoAlt} width={510} height={127} priority className="h-7 w-auto" />
+            <BrandLockup mark={mark} wordmark={wordmark} alt={logoAlt} size="lg" priority />
           </Link>
 
           <ul className="ml-auto hidden items-center gap-7 lg:flex">

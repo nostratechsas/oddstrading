@@ -1,41 +1,46 @@
 // 📖 Docs: obsidian/frontend/design-system.md → "Motion"
 /**
- * Continuous bookmaker ticker. The track is duplicated and translated by -50%
- * on an infinite spring loop — a CSS `@keyframes` marquee is banned (hard
- * rule #1). Masked at both edges so names fade instead of clipping.
+ * Continuous logo wall. The track is duplicated and translated by -50% on an
+ * infinite spring loop — a CSS `@keyframes` marquee is banned (hard rule #1).
+ * Masked at both edges so tiles fade instead of clipping.
  */
 "use client";
 
 import { animated, useSpring } from "@react-spring/web";
 
-export interface BookmakerMarqueeProps {
-  names: readonly string[];
+import { BookmakerTile } from "./bookmaker-tile";
+
+export interface MarqueeItem {
+  slug: string;
+  name: string;
+  color: string;
+  logo?: string;
 }
 
-export const BookmakerMarquee = ({ names }: BookmakerMarqueeProps) => {
+export interface BookmakerMarqueeProps {
+  items: readonly MarqueeItem[];
+}
+
+export const BookmakerMarquee = ({ items }: BookmakerMarqueeProps) => {
   const track = useSpring({
     from: { x: "0%" },
     to: { x: "-50%" },
     loop: true,
-    config: { duration: 48000 },
+    config: { duration: 52000 },
   });
 
   return (
-    <div
-      className="relative z-1 mt-20 overflow-hidden border-y border-border-hairline py-5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]"
-      aria-label="Casas de apuestas soportadas"
+    <section
+      aria-label="Casas de apuestas integradas"
+      className="relative z-1 mt-20 overflow-hidden border-y border-border-hairline py-6 [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]"
     >
-      <animated.ul style={track} className="flex w-max items-center gap-14">
-        {[...names, ...names].map((name, index) => (
-          <li
-            key={`${name}-${index}`}
-            aria-hidden={index >= names.length}
-            className="text-base font-light tracking-tight whitespace-nowrap text-foreground-subtle"
-          >
-            {name}
+      <animated.ul style={track} className="flex w-max items-center gap-4">
+        {[...items, ...items].map((item, index) => (
+          <li key={`${item.slug}-${index}`} aria-hidden={index >= items.length}>
+            <BookmakerTile name={item.name} color={item.color} logo={item.logo} />
           </li>
         ))}
       </animated.ul>
-    </div>
+    </section>
   );
 };

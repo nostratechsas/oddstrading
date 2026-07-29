@@ -4,8 +4,8 @@
  * the client leaves each section imports.
  */
 import { SiteHeader } from "@/components/common/site-header";
+import { bookmakers } from "@/data/mocks/bookmakers";
 import {
-  bookmakerMarquee,
   brand,
   codeSamples,
   coverageGroups,
@@ -21,6 +21,7 @@ import {
   useCases,
 } from "@/data/mocks/home";
 import { plans } from "@/data/mocks/plans";
+import { getBookmakerLogo } from "@/utils/assets/bookmaker-logos";
 
 import { BookmakerMarquee } from "./bookmaker-marquee";
 import { CoverageSection } from "./coverage-section";
@@ -39,9 +40,19 @@ const TRUST = ["99,98% uptime", "Sub-120 ms", "190+ casas", "Soporte en español
 const COVERAGE_LEDE =
   "Filtra por región, licencia, deporte o mercado. Si un operador existe y publica cuotas, lo más probable es que ya esté en el feed.";
 
-export const HomeView = () => (
+export const HomeView = () => {
+  // Resolved on the server: a tile renders the official file when one exists
+  // under public/assets/bookmakers/, and its colour treatment otherwise.
+  const wall = bookmakers.map((item) => ({ ...item, logo: getBookmakerLogo(item.slug) }));
+
+  return (
   <>
-    <SiteHeader links={navLinks} logo={brand.logo} logoAlt={brand.logoAlt} />
+    <SiteHeader
+      links={navLinks}
+      mark={brand.mark}
+      wordmark={brand.wordmark}
+      logoAlt={brand.logoAlt}
+    />
 
     <main>
       <Hero
@@ -53,7 +64,7 @@ export const HomeView = () => (
         videoSrc={heroContent.videoSrc}
         board={liveBoard}
       />
-      <BookmakerMarquee names={bookmakerMarquee} />
+      <BookmakerMarquee items={wall} />
       <StatsBand stats={stats} />
       <PlatformSection content={platformContent} />
       <CoverageSection groups={coverageGroups} lede={COVERAGE_LEDE} />
@@ -66,7 +77,8 @@ export const HomeView = () => (
 
     <SiteFooter
       columns={footerColumns}
-      logo={brand.logo}
+      mark={brand.mark}
+      wordmark={brand.wordmark}
       logoAlt={brand.logoAlt}
       tagline={brand.tagline}
       email={brand.email}
@@ -74,4 +86,5 @@ export const HomeView = () => (
       compliance={brand.compliance}
     />
   </>
-);
+  );
+};

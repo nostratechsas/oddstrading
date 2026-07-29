@@ -2,13 +2,15 @@
 /**
  * Site footer — brand block plus the link columns and the compliance line.
  */
-import Image from "next/image";
+import Link from "next/link";
 
+import { BrandLockup } from "@/components/common/brand-lockup";
 import { Shell } from "@/components/ui/shell";
 
 export interface SiteFooterProps {
   columns: readonly { title: string; links: readonly { href: string; label: string }[] }[];
-  logo: string;
+  mark: string;
+  wordmark: string;
   logoAlt: string;
   tagline: string;
   email: string;
@@ -18,7 +20,8 @@ export interface SiteFooterProps {
 
 export const SiteFooter = ({
   columns,
-  logo,
+  mark,
+  wordmark,
   logoAlt,
   tagline,
   email,
@@ -29,9 +32,9 @@ export const SiteFooter = ({
     <Shell>
       <div className="grid gap-10 md:grid-cols-3 lg:grid-cols-[1.6fr_repeat(4,1fr)]">
         <div className="md:col-span-3 lg:col-span-1">
-          <a href="#inicio" className="inline-flex" aria-label={`${logoAlt}, inicio`}>
-            <Image src={logo} alt={logoAlt} width={510} height={127} className="h-9 w-auto" />
-          </a>
+          <Link href="/" className="inline-flex" aria-label={`${logoAlt}, inicio`}>
+            <BrandLockup mark={mark} wordmark={wordmark} alt={logoAlt} size="xl" />
+          </Link>
           <p className="mt-4 max-w-[30ch] text-sm text-foreground-subtle">{tagline}</p>
           <a
             href={`mailto:${email}`}

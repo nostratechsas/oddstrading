@@ -10,6 +10,39 @@ consequences. Use [[templates/adr-note]] for new entries. Newest first.
 
 ---
 
+## ADR-0021 — Bookmaker logos are drop-in files, never bundled by us
+
+- **Status:** Accepted
+- **Date:** 2026-07-29
+
+**Context.** The logo wall should show the operators' real logos, not their
+names as text. Every one of those marks — bet365, Betano, BetPlay, Pinnacle,
+Betfair — is a **registered trademark**. Scraping them off the operators' sites
+and committing them would put unlicensed trademark files in the repository and
+in the production bundle, on a page that advertises a commercial product.
+
+**Decision.** The tile resolves its artwork from disk instead of from code.
+`utils/assets/bookmaker-logos.ts` reads `public/assets/bookmakers/` once at
+server start and maps `<slug>.<ext>` → public path; `views/home/index.tsx`
+(a Server Component) passes the result down. A tile with a file renders the
+file. A tile without one renders the operator's name in its own brand colour
+over a hairline rule of the same hue — a branded plate, not a bare word.
+
+**Consequences.**
+- The repo ships **no** third-party trademark files. Whoever has the licence or
+  the affiliate-programme access drops the assets in; the folder's `README.md`
+  states the naming rule and the licensing caveat.
+- No manifest to keep in sync — adding a logo is a file copy plus a dev-server
+  restart.
+- The `color` values are the brand hue **lifted for legibility on the OLED
+  canvas**; a few operators use navies that vanish at their exact value. Once a
+  real logo file is present the colour only drives the accent rule, so the exact
+  brand value can be restored then.
+- `readdirSync` at module scope is server-only by construction. It must never be
+  imported into a client component.
+
+---
+
 ## ADR-0020 — Checkout collects billing data only; the provider owns the card
 
 - **Status:** Accepted

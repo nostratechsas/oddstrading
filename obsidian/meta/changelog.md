@@ -8,6 +8,23 @@ updated: 2026-07-25
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-07-29 (brand & logo wall)
+
+- **Brand lockup split into symbol + wordmark** — `components/common/brand-lockup.tsx`.
+  The symbol is re-derived from the favicon master (which the client replaced
+  mid-project with a 1799 px version carrying transparent corners over a white
+  ground) and the wordmark is cropped out of the logotype at `x=125`, the last
+  column clear of the symbol inside the text band. Sizes are ~2× the previous
+  logo; the `md/lg/xl` steps are calibrated against the adaptive grid, where the
+  root font-size follows the viewport off a 1920 px base — `h-16` lands at ~49 px
+  at 1500 px wide, not 64 px.
+- **Bookmaker marquee is now a logo wall** — `bookmaker-tile.tsx` plus
+  `data/mocks/bookmakers.ts` and the server-only
+  `utils/assets/bookmaker-logos.ts`, which reads `public/assets/bookmakers/` at
+  load. Drop an official press-kit file named after the slug and the tile
+  switches from its colour treatment to the real logo, with no code change. See
+  [[decisions-log]] ADR-0021.
+
 ## 2026-07-29 (later)
 
 - **Commercial model replaced.** The four invented tiers are gone; the real

@@ -57,13 +57,6 @@ export const liveBoard = {
   ] satisfies OddsRow[],
 };
 
-export const bookmakerMarquee = [
-  "Bet365", "Betano", "Betplay", "Wplay", "Rushbet", "Codere", "Betsson",
-  "Pinnacle", "Betfair Exchange", "1xBet", "Caliente", "Betcris", "bplay",
-  "Winamax", "Bwin", "Unibet", "Tipico", "Sisal", "888sport", "Doradobet",
-  "Sportium", "Stake", "Rivalo", "William Hill",
-];
-
 export const stats: Stat[] = [
   { value: 190, suffix: "+", label: "Casas de apuestas" },
   { value: 38, label: "Deportes cubiertos" },
@@ -362,7 +355,10 @@ export const footerColumns = [
 ];
 
 export const brand = {
-  logo: "/assets/brand/oddstrading-logo.png",
+  /** Symbol from the 2000 px favicon master — crisp at any size. */
+  mark: "/assets/brand/oddstrading-mark.png",
+  /** Wordmark cropped from the logotype. */
+  wordmark: "/assets/brand/oddstrading-wordmark.png",
   logoAlt: "OddsTrading",
   email: "contact@oddstradingview.com",
   tagline: "Infraestructura de cuotas en tiempo real para Latinoamérica y Europa.",

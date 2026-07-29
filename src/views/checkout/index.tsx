@@ -22,7 +22,12 @@ export const CheckoutView = ({ plan }: CheckoutViewProps) => {
 
   return (
     <>
-      <SiteHeader links={navLinks} logo={brand.logo} logoAlt={brand.logoAlt} />
+      <SiteHeader
+        links={navLinks}
+        mark={brand.mark}
+        wordmark={brand.wordmark}
+        logoAlt={brand.logoAlt}
+      />
 
       <main className="pt-32 pb-24 md:pt-40">
         <Shell>
