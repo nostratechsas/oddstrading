@@ -8,6 +8,30 @@ updated: 2026-07-25
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-07-29 (later)
+
+- **Commercial model replaced.** The four invented tiers are gone; the real
+  catalogue is three monthly licences — Starter USD 3.000 (integración 1X2 a la
+  media de mercado), Pro USD 5.000 (resto de deportes, mapeo de cuotas mejorado,
+  mercados más apostados) and Elite USD 6.500 (40+ casas, datos en tiempo real,
+  feed de cuotas). Prices moved out of `data/mocks/home.ts` into
+  **`data/mocks/plans.ts`**, shared by the pricing section and the checkout, so
+  the advertised price and the charged price cannot drift.
+- **New `/checkout` route** — `app/checkout/page.tsx` → `views/checkout/`.
+  Three steps (plan → datos de facturación → medio de pago) with a sticky order
+  summary, plan preselected from `?plan=<slug>`. New UI primitive `Field` /
+  `TextField` / `SelectField`; new util `utils/format/currency.ts`.
+- **New `POST /api/checkout`** — validates the order with zod, **prices it
+  server-side from the plan catalogue** (never from the client payload), and
+  forwards it to `CHECKOUT_ENDPOINT` when configured, logging it otherwise. New
+  env var documented in [[environment-variables]]. See [[decisions-log]] ADR-0020.
+- **`SiteHeader` promoted to `components/common/`** — it is now shared by the
+  home and checkout views, and its links became root-relative (`/#precios`) so
+  the anchors resolve from any route.
+- **Free-tier copy removed** across hero, CTA, lead form and FAQ: with a USD
+  3.000 entry price the offer is a guided demo, not a free plan.
+- Contact address is now **contact@oddstradingview.com**.
+
 ## 2026-07-29
 
 - **Project rebranded to OddsTrading and the home view built out.** The starter

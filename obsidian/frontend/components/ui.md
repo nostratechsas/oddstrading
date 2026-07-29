@@ -50,6 +50,12 @@ The page's standard scroll entry: a fade-up that settles once. Wraps
 `<Inview mode="once">` so every section shares one spring config. `step`
 staggers entry by 90 ms per unit.
 
+## `<Field>` / `<TextField>` / `<SelectField>` — `field.tsx`
+
+Labelled form controls used by the checkout. Every input is named and tied to
+its own `<label>` — placeholders are hints, never labels. `hint` doubles as the
+validation message and turns red with `invalid`, which also sets `aria-invalid`.
+
 ## `<SectionHeading>` — `section-heading.tsx` `"use client"`
 
 Two-line section headline on [[text-engine]] — a lead line plus a muted one.

@@ -14,7 +14,7 @@ import TextEngine from "spring-text-engine";
 
 export interface SectionHeadingProps {
   /** Heading level — the tag carries meaning, the class carries looks. */
-  tag?: "h2" | "h3";
+  tag?: "h1" | "h2" | "h3";
   lead: string;
   muted?: string;
   className?: string;

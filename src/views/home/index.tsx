@@ -1,11 +1,13 @@
 /**
  * Home view — a Server Component that assembles the OddsTrading landing page
- * and feeds every section its content from `data/mocks/home`. Interactivity
- * lives in the client leaves each section imports.
+ * and feeds every section its content from `data/mocks`. Interactivity lives in
+ * the client leaves each section imports.
  */
+import { SiteHeader } from "@/components/common/site-header";
 import {
   bookmakerMarquee,
   brand,
+  codeSamples,
   coverageGroups,
   faqs,
   footerColumns,
@@ -13,13 +15,12 @@ import {
   integrationSteps,
   liveBoard,
   navLinks,
-  codeSamples,
-  plans,
   platformContent,
   sdks,
   stats,
   useCases,
 } from "@/data/mocks/home";
+import { plans } from "@/data/mocks/plans";
 
 import { BookmakerMarquee } from "./bookmaker-marquee";
 import { CoverageSection } from "./coverage-section";
@@ -30,7 +31,6 @@ import { IntegrationSection } from "./integration-section";
 import { PlatformSection } from "./platform-section";
 import { PricingSection } from "./pricing-section";
 import { SiteFooter } from "./site-footer";
-import { SiteHeader } from "./site-header";
 import { StatsBand } from "./stats-band";
 import { UseCasesSection } from "./use-cases-section";
 
@@ -59,7 +59,7 @@ export const HomeView = () => (
       <CoverageSection groups={coverageGroups} lede={COVERAGE_LEDE} />
       <IntegrationSection steps={integrationSteps} samples={codeSamples} sdks={sdks} />
       <UseCasesSection items={useCases} />
-      <PricingSection plans={plans} />
+      <PricingSection plans={plans} email={brand.email} />
       <FaqSection items={faqs} email={brand.email} />
       <CtaSection trust={TRUST} />
     </main>

@@ -22,7 +22,8 @@ export const CtaSection = ({ trust }: CtaSectionProps) => (
           <Eyebrow live>Empieza hoy</Eyebrow>
           <CtaHeadline lead="La línea se mueve." accent="Muévete antes." />
           <p className="max-w-[48ch] text-foreground-muted">
-            Crea tu cuenta gratuita y consulta tu primera cuota en vivo en menos de un minuto.
+            Déjanos tu correo y coordinamos una demo técnica con datos reales. Si ya sabes qué
+            plan necesitas, puedes contratarlo directo.
           </p>
 
           <LeadForm />

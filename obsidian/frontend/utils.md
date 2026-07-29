@@ -48,6 +48,13 @@ syntax-highlighting library ships to the client, and unknown syntax falls
 through as plain text rather than being mangled. Consumed by
 `views/home/code-panel.tsx`, which maps each kind to a colour token.
 
+## `format/currency.ts`
+
+`formatUsd(amount)` — whole-dollar formatting without the symbol, using `es-CO`
+grouping (`3.000`, not `3,000`) to match the Spanish-speaking audience. Shared
+by the pricing cards, the plan picker and the order summary so the same figure
+never renders two different ways.
+
 ## `seo/generate-page-metadata.ts`
 
 `generateMetadata(props?)` — shared page-`Metadata` builder. `generateViewport()`

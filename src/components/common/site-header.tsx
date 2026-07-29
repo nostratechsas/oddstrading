@@ -8,6 +8,7 @@
 
 import { animated, useSpring, useTrail } from "@react-spring/web";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { ActionLink } from "@/components/ui/action-link";
@@ -58,9 +59,9 @@ export const SiteHeader = ({ links, logo, logoAlt }: SiteHeaderProps) => {
           aria-label="Principal"
           className="pointer-events-auto flex w-full max-w-shell items-center gap-6 rounded-pill border border-border-hairline bg-background-overlay py-2 pr-2 pl-5 shadow-[inset_0_1px_0_var(--surface-strong)] backdrop-blur-2xl"
         >
-          <a href="#inicio" className="flex shrink-0 items-center" aria-label={`${logoAlt}, inicio`}>
+          <Link href="/" className="flex shrink-0 items-center" aria-label={`${logoAlt}, inicio`}>
             <Image src={logo} alt={logoAlt} width={510} height={127} priority className="h-7 w-auto" />
-          </a>
+          </Link>
 
           <ul className="ml-auto hidden items-center gap-7 lg:flex">
             {links.map((link) => (
@@ -76,13 +77,13 @@ export const SiteHeader = ({ links, logo, logoAlt }: SiteHeaderProps) => {
           </ul>
 
           <div className="hidden items-center gap-5 lg:flex">
-            <a
-              href="#contacto"
+            <Link
+              href="/#contacto"
               className="text-sm text-foreground-muted transition-colors duration-[var(--duration-fast)] ease-entrance hover:text-foreground"
             >
               Iniciar sesión
-            </a>
-            <ActionLink href="#precios">Prueba gratis</ActionLink>
+            </Link>
+            <ActionLink href="/checkout">Contratar</ActionLink>
           </div>
 
           <button
@@ -110,8 +111,8 @@ export const SiteHeader = ({ links, logo, logoAlt }: SiteHeaderProps) => {
             if (!link) {
               return (
                 <animated.div key="cta" style={style} className="mt-8">
-                  <ActionLink href="#precios" size="lg" onClick={() => setOpen(false)}>
-                    Empezar gratis
+                  <ActionLink href="/checkout" size="lg" onClick={() => setOpen(false)}>
+                    Contratar
                   </ActionLink>
                 </animated.div>
               );

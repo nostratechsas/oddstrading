@@ -13,7 +13,7 @@ import { apiFetch } from "@/lib/api-client";
 type Status = "idle" | "sending" | "sent" | "error";
 
 const MESSAGES: Record<Exclude<Status, "idle" | "sending">, string> = {
-  sent: "¡Listo! Revisa tu correo: te enviamos la API key.",
+  sent: "¡Listo! Te escribimos en menos de 24 horas hábiles para agendar la demo.",
   error: "No pudimos registrar tu correo. Inténtalo de nuevo en un momento.",
 };
 
@@ -39,7 +39,7 @@ export const LeadForm = () => {
         body: JSON.stringify({
           name: "Lead landing",
           email: email.trim(),
-          message: "Solicitud de API key desde la landing de OddsTrading.",
+          message: "Solicitud de demo técnica desde la landing de OddsTrading.",
         }),
       });
       setEmail("");
@@ -72,7 +72,7 @@ export const LeadForm = () => {
           disabled={status === "sending"}
           className="group inline-flex items-center gap-3 rounded-pill border border-transparent bg-action-primary py-2.5 pr-2.5 pl-6 text-base font-medium tracking-tight text-action-primary-foreground transition-colors duration-[var(--duration-fast)] ease-entrance hover:bg-action-primary-hover disabled:opacity-60"
         >
-          {status === "sending" ? "Enviando…" : "Obtener API key"}
+          {status === "sending" ? "Enviando…" : "Solicitar demo"}
           <span
             aria-hidden="true"
             className="grid h-8.5 w-8.5 shrink-0 place-items-center rounded-pill bg-background/15 transition-transform duration-[var(--duration-normal)] ease-entrance group-hover:translate-x-0.5 group-hover:-translate-y-px"

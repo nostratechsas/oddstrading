@@ -48,8 +48,8 @@ export const Hero = ({
         </Reveal>
 
         <Reveal step={3} className="flex flex-wrap gap-3">
-          <ActionLink href="#precios" size="lg">
-            Crear cuenta gratis
+          <ActionLink href="/checkout" size="lg">
+            Contratar ahora
           </ActionLink>
           <ActionLink href="#integracion" tone="ghost" size="lg" icon="chevron">
             Ver documentación

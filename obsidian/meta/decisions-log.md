@@ -10,6 +10,47 @@ consequences. Use [[templates/adr-note]] for new entries. Newest first.
 
 ---
 
+## ADR-0020 — Checkout collects billing data only; the provider owns the card
+
+- **Status:** Accepted
+- **Date:** 2026-07-29
+
+**Context.** The site needs to sell three monthly licences (USD 3.000 / 5.000 /
+6.500) with a subscription flow comparable to Claude's or OpenAI's. The obvious
+shortcut — putting card fields in our own form — drags the whole application
+into **PCI-DSS scope**: any page that so much as touches a PAN in the DOM
+inherits the audit burden, and a Next.js marketing site is the worst possible
+place to carry it.
+
+**Decision.**
+
+1. `/checkout` collects **plan, fiscal data and the buyer's choice of payment
+   method**. No card, CVV or expiry field exists anywhere in the codebase.
+2. The order posts to `POST /api/checkout`, which **prices it server-side from
+   `data/mocks/plans.ts`**. The client's payload supplies a plan *slug*, never
+   an amount — otherwise a crafted request could name its own price.
+3. The route is **provider-agnostic**: it forwards the priced order to
+   `CHECKOUT_ENDPOINT` and returns a reference plus the next step. Pointing that
+   variable at a Stripe/Paddle session endpoint is the only change needed to go
+   live; the UI does not move.
+4. Card capture happens on the provider's **hosted page**, which the buyer
+   reaches after confirming.
+
+**Consequences.**
+- The app stays in **SAQ-A**, the lightest PCI bracket.
+- The flow is testable end-to-end with no provider account: with
+  `CHECKOUT_ENDPOINT` unset the route logs the order and still returns a
+  reference.
+- Tax is displayed as "según tu país" rather than a computed rate — the rate
+  depends on the buyer's jurisdiction and status, and whichever merchant of
+  record is chosen is the component that resolves it. Hardcoding a percentage
+  would be wrong in most of the target countries.
+- A merchant-of-record provider (Paddle, Lemon Squeezy) versus a gateway
+  (Stripe, Mercado Pago) is still an open commercial decision; the integration
+  point is identical either way.
+
+---
+
 ## ADR-0019 — The hero cover film is composited with `mix-blend-mode: screen`
 
 - **Status:** Accepted

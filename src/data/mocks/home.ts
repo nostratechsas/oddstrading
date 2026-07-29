@@ -28,16 +28,6 @@ export interface CoverageGroup {
   items: { name: string; note?: string }[];
 }
 
-export interface Plan {
-  name: string;
-  audience: string;
-  monthly: number;
-  yearly: number;
-  features: string[];
-  cta: string;
-  featured?: boolean;
-}
-
 export interface Faq {
   question: string;
   answer: string;
@@ -48,7 +38,7 @@ export const heroContent = {
   headline: ["Toda la línea", "del mercado."],
   headlineAccent: "Un solo endpoint.",
   lede: "OddsTrading unifica las cuotas pre-match, en vivo, props y líneas de cierre de 190+ casas de apuestas de Latinoamérica y Europa en una API REST y un stream WebSocket. Sin scrapers. Sin mantenimiento. Sub-120 ms.",
-  note: "Sin tarjeta de crédito · 500 llamadas diarias gratis · Activación en 60 segundos",
+  note: "Demo con datos reales · Onboarding guiado · Activación en 24 horas",
   videoSrc: "/assets/hero/portada.mp4",
 } as const;
 
@@ -289,55 +279,6 @@ export const useCases = [
   },
 ];
 
-export const plans: Plan[] = [
-  {
-    name: "Free",
-    audience: "Para explorar la API.",
-    monthly: 0,
-    yearly: 0,
-    cta: "Empezar",
-    features: ["3 casas recreativas", "500 llamadas al día", "Fútbol + baloncesto", "REST API"],
-  },
-  {
-    name: "Starter",
-    audience: "Comparadores y proyectos en lanzamiento.",
-    monthly: 79,
-    yearly: 63,
-    cta: "Elegir Starter",
-    features: ["8 casas a elección", "5.000 llamadas / hora", "38 deportes", "Histórico 30 días", "Soporte por correo"],
-  },
-  {
-    name: "Growth",
-    audience: "Escáneres de arbitraje y +EV en producción.",
-    monthly: 189,
-    yearly: 151,
-    cta: "Elegir Growth",
-    featured: true,
-    features: [
-      "20 casas · LatAm + Europa",
-      "20.000 llamadas / hora",
-      "Stream WebSocket incluido",
-      "Motor de arbitraje y value bets",
-      "Histórico 12 meses",
-      "Soporte prioritario",
-    ],
-  },
-  {
-    name: "Scale",
-    audience: "Trading cuantitativo y operadores.",
-    monthly: 349,
-    yearly: 279,
-    cta: "Elegir Scale",
-    features: [
-      "Todas las casas del feed",
-      "60.000 llamadas / hora",
-      "WebSocket sin límite de eventos",
-      "Histórico completo desde 2019",
-      "Slack compartido + SLA 99,9%",
-    ],
-  },
-];
-
 export const faqs: Faq[] = [
   {
     question: "¿Qué casas de apuestas cubren en Latinoamérica?",
@@ -348,12 +289,12 @@ export const faqs: Faq[] = [
     answer: "La mediana de entrega es de 84 ms y el percentil 95 se mantiene por debajo de 120 ms desde nuestros nodos de São Paulo, Bogotá, Fráncfort y Londres. Con WebSocket recibes el cambio por push; no dependes de tu intervalo de sondeo.",
   },
   {
-    question: "¿Hay un plan gratuito de verdad?",
-    answer: "Sí. El plan Free entrega 500 llamadas diarias sobre 3 casas recreativas, sin tarjeta de crédito y sin fecha de expiración. Es suficiente para prototipar e integrar antes de decidir.",
+    question: "¿Puedo probar la API antes de contratar?",
+    answer: "Sí. Abrimos un entorno de prueba con datos reales y una API key temporal para que valides la integración antes de firmar. Escríbenos y coordinamos una demo técnica con tu equipo.",
   },
   {
     question: "¿Puedo pedir una casa o un mercado que no esté en la lista?",
-    answer: "Sí. Los clientes de Growth en adelante pueden solicitar operadores o mercados adicionales; el tiempo medio de incorporación de una casa nueva es de 7 a 10 días hábiles, sin costo extra en la mayoría de los casos.",
+    answer: "Sí. Los clientes de Pro en adelante pueden solicitar operadores o mercados adicionales; el tiempo medio de incorporación de una casa nueva es de 7 a 10 días hábiles, sin costo extra en la mayoría de los casos.",
   },
   {
     question: "¿Cuánto tarda la integración?",
@@ -369,12 +310,13 @@ export const faqs: Faq[] = [
   },
 ];
 
+// Root-relative anchors so the shared header also works from /checkout.
 export const navLinks = [
-  { href: "#plataforma", label: "Plataforma" },
-  { href: "#cobertura", label: "Cobertura" },
-  { href: "#integracion", label: "Integración" },
-  { href: "#precios", label: "Precios" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#plataforma", label: "Plataforma" },
+  { href: "/#cobertura", label: "Cobertura" },
+  { href: "/#integracion", label: "Integración" },
+  { href: "/#precios", label: "Precios" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 export const footerColumns = [
@@ -422,7 +364,7 @@ export const footerColumns = [
 export const brand = {
   logo: "/assets/brand/oddstrading-logo.png",
   logoAlt: "OddsTrading",
-  email: "hola@oddstrading.io",
+  email: "contact@oddstradingview.com",
   tagline: "Infraestructura de cuotas en tiempo real para Latinoamérica y Europa.",
   legal: "© 2026 OddsTrading. Todos los derechos reservados.",
   compliance: "Servicio de datos B2B. +18. Juega con responsabilidad.",

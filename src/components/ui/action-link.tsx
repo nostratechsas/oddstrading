@@ -4,6 +4,7 @@
  * Hover only shifts colour and nudges the icon a few px, so it stays CSS per
  * ADR-0014 (obsidian/frontend/design-system.md → "Motion").
  */
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 export type ActionTone = "primary" | "ghost" | "light";
@@ -57,7 +58,7 @@ export const ActionLink = ({
   className = "",
   onClick,
 }: ActionLinkProps) => (
-  <a
+  <Link
     href={href}
     onClick={onClick}
     className={`group inline-flex items-center gap-3 rounded-pill border font-medium tracking-tight transition-colors duration-[var(--duration-fast)] ease-entrance ${TONES[tone]} ${
@@ -75,5 +76,5 @@ export const ActionLink = ({
         {icon === "arrow" ? <ArrowIcon /> : <ChevronIcon />}
       </span>
     )}
-  </a>
+  </Link>
 );
