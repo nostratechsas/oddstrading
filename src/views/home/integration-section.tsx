@@ -33,8 +33,11 @@ export const IntegrationSection = ({ steps, samples, sdks }: IntegrationSectionP
         </Reveal>
       </header>
 
-      <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-        <Reveal tag="ol" className="flex flex-col gap-8">
+      {/* `minmax(0,…)` everywhere: an `fr`/`auto` track takes its minimum from
+          content, so the code panel's wide <pre> would stretch the track past
+          the viewport instead of scrolling inside itself. */}
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start">
+        <Reveal tag="ol" className="flex min-w-0 flex-col gap-8">
           {steps.map((step) => (
             <li key={step.index} className="relative border-l border-border-hairline-strong pl-6">
               <span
@@ -48,7 +51,7 @@ export const IntegrationSection = ({ steps, samples, sdks }: IntegrationSectionP
           ))}
         </Reveal>
 
-        <Reveal step={1}>
+        <Reveal step={1} className="min-w-0">
           <CodePanel samples={samples} />
         </Reveal>
       </div>

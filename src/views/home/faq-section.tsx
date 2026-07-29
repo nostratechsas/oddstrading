@@ -16,7 +16,7 @@ export interface FaqSectionProps {
 
 export const FaqSection = ({ items, email }: FaqSectionProps) => (
   <section id="faq" className="py-16 md:py-22">
-    <Shell className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:gap-16">
+    <Shell className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-16">
       <header className="flex flex-col items-start gap-5 lg:sticky lg:top-28">
         <Reveal>
           <Eyebrow>FAQ</Eyebrow>

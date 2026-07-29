@@ -30,10 +30,13 @@ export const SiteFooter = ({
 }: SiteFooterProps) => (
   <footer className="border-t border-border-hairline bg-background-elevated/60 pt-16 pb-10">
     <Shell>
-      <div className="grid gap-10 md:grid-cols-3 lg:grid-cols-[1.6fr_repeat(4,1fr)]">
-        <div className="md:col-span-3 lg:col-span-1">
-          <Link href="/" className="inline-flex" aria-label={`${logoAlt}, inicio`}>
-            <BrandLockup mark={mark} wordmark={wordmark} alt={logoAlt} size="xl" />
+      {/* `minmax(0,…)` on the brand track: an `fr` track has an `auto` minimum,
+          so without it the lockup would push the track wider than its share and
+          crowd the link columns. */}
+      <div className="grid gap-x-8 gap-y-10 md:grid-cols-3 lg:grid-cols-[minmax(0,1.5fr)_repeat(4,minmax(0,1fr))]">
+        <div className="min-w-0 md:col-span-3 lg:col-span-1">
+          <Link href="/" className="inline-flex max-w-full" aria-label={`${logoAlt}, inicio`}>
+            <BrandLockup mark={mark} wordmark={wordmark} alt={logoAlt} size="lg" />
           </Link>
           <p className="mt-4 max-w-[30ch] text-sm text-foreground-subtle">{tagline}</p>
           <a

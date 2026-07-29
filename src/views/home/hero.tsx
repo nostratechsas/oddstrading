@@ -33,7 +33,7 @@ export const Hero = ({
   <section id="inicio" className="relative pt-32 md:pt-40">
     <HeroBackdrop src={videoSrc} />
 
-    <Shell className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
+    <Shell className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:gap-16">
       <div className="flex flex-col items-start gap-6">
         <Reveal>
           <Eyebrow live>{eyebrow}</Eyebrow>

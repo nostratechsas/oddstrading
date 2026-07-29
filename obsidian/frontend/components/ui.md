@@ -8,6 +8,14 @@ updated: 2026-07-29
 Files in `src/components/ui/`. Stateless design-system pieces with no provider
 dependencies. Placement rules: [[component-conventions]].
 
+> [!warning] Two responsive traps this project already hit
+> 1. **Size logos with `max-h`, never `h`.** A fixed height is an unshrinkable
+>    block — inside a grid column it overflows and paints over its neighbour.
+>    `max-h-*` + `h-auto` + `max-w-full` caps it and lets it scale down.
+> 2. **Every multi-column grid track needs `minmax(0,…)`.** An `fr`/`auto` track
+>    takes its minimum from content, so one wide child (a `<pre>`, a long table)
+>    stretches the track past the viewport instead of scrolling inside itself.
+
 ## `<Shell>` — `shell.tsx`
 
 The centred content column. Owns `max-w-shell` and the horizontal gutters so no

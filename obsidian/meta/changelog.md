@@ -8,6 +8,20 @@ updated: 2026-07-25
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-07-29 (responsive fixes)
+
+- **`BrandLockup` is sized with `max-h`, not `h`.** A fixed height made it an
+  unshrinkable block: in the footer's brand column it overflowed and painted over
+  the "Producto" column. Now `max-h-*` + `h-auto` + `max-w-full` caps it where
+  there is room and scales it down where there is not, and the `lg`/`xl` steps
+  grow at the `xl` breakpoint instead of being one fixed size. New `sm` step.
+- **`minmax(0,…)` on every multi-column grid track** (hero, integration, FAQ,
+  checkout, footer). An `fr` or `auto` track takes its minimum from content, so
+  the integration section's `<pre>` was stretching its track to 758 px inside a
+  504 px viewport — the page scrolled horizontally on mobile instead of the code
+  block scrolling inside itself. Verified `scrollWidth === clientWidth` at 390,
+  768, 1024, 1280 and 1920 px, on both routes.
+
 ## 2026-07-29 (brand & logo wall)
 
 - **Brand lockup split into symbol + wordmark** — `components/common/brand-lockup.tsx`.

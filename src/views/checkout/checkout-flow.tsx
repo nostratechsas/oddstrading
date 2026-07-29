@@ -149,8 +149,12 @@ export const CheckoutFlow = ({
   }
 
   return (
-    <form onSubmit={submit} noValidate className="grid gap-10 lg:grid-cols-[1.35fr_0.65fr]">
-      <div className="flex flex-col gap-12">
+    <form
+      onSubmit={submit}
+      noValidate
+      className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]"
+    >
+      <div className="flex min-w-0 flex-col gap-12">
         <Step step={steps[0]}>
           <PlanPicker plans={plans} value={planSlug} onChange={setPlanSlug} />
         </Step>

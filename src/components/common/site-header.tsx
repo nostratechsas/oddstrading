@@ -60,7 +60,7 @@ export const SiteHeader = ({ links, mark, wordmark, logoAlt }: SiteHeaderProps) 
           aria-label="Principal"
           className="pointer-events-auto flex w-full max-w-shell items-center gap-6 rounded-pill border border-border-hairline bg-background-overlay py-3 pr-3 pl-6 shadow-[inset_0_1px_0_var(--surface-strong)] backdrop-blur-2xl"
         >
-          <Link href="/" className="flex shrink-0 items-center" aria-label={`${logoAlt}, inicio`}>
+          <Link href="/" className="flex min-w-0 items-center" aria-label={`${logoAlt}, inicio`}>
             <BrandLockup mark={mark} wordmark={wordmark} alt={logoAlt} size="lg" priority />
           </Link>
 
