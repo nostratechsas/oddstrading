@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — lifted from the reference capture.
+   Background #071019 · cards #0d1724 · hover #132132 · hairline white/5%
+   Primary #22c55e · blue #2563eb · red #ef4444 · yellow #facc15
+   --------------------------------------------------------------------------- */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #071019;
+  --color-rail: #08111d;
+  --color-panel: #0d1724;
+  --color-raised: #101d2e;
+  --color-hover: #132132;
+
+  --color-line: rgb(255 255 255 / 0.05);
+  --color-line-strong: rgb(255 255 255 / 0.1);
+
+  --color-ink: #ffffff;
+  --color-muted: #94a3b8;
+  --color-faint: #64748b;
+
+  --color-up: #22c55e;
+  --color-up-soft: rgb(34 197 94 / 0.12);
+  --color-down: #ef4444;
+  --color-down-soft: rgb(239 68 68 / 0.12);
+  --color-blue: #2563eb;
+  --color-blue-soft: rgb(37 99 235 / 0.14);
+  --color-gold: #facc15;
+  --color-gold-soft: rgb(250 204 21 / 0.12);
+
+  --radius-card: 1rem;
+  --radius-input: 0.75rem;
+  --radius-btn: 0.625rem;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-feature-settings: "cv11";
+}
+
+/* Slim, recessive scrollbars — the terminal look. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+/* Bottom ticker marquee — the list is rendered twice, shift by half. */
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-ticker {
+  animation: ticker 60s linear infinite;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Live-dot pulse. */
+@keyframes live-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgb(34 197 94 / 0);
+  }
+}
+.animate-live {
+  animation: live-pulse 2s ease-out infinite;
+}
