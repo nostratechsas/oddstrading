@@ -24,6 +24,17 @@ export interface Bookmaker {
 }
 
 export const bookmakers: Bookmaker[] = [
+  // Con archivo oficial en public/assets/bookmakers/
+  { slug: "draftkings", name: "DraftKings", color: "#53D337", region: "global" },
+  { slug: "betmgm", name: "BetMGM", color: "#BFA36A", region: "global" },
+  { slug: "williamhill", name: "William Hill", color: "#5AA6DC", region: "eu" },
+  { slug: "ladbrokes", name: "Ladbrokes", color: "#E4483C", region: "eu" },
+  { slug: "888sport", name: "888sport", color: "#FF9A3D", region: "eu" },
+  { slug: "stake", name: "Stake", color: "#4FB3FF", region: "global" },
+  { slug: "22bet", name: "22bet", color: "#3FB877", region: "global" },
+  { slug: "betrivers", name: "BetRivers", color: "#4C9FE0", region: "global" },
+
+  // Pendientes de archivo oficial — se dibujan con su color de marca
   { slug: "bet365", name: "bet365", color: "#22B587", region: "global" },
   { slug: "betano", name: "Betano", color: "#FF7A1A", region: "latam" },
   { slug: "betplay", name: "BetPlay", color: "#FFD84D", region: "latam" },
@@ -44,8 +55,5 @@ export const bookmakers: Bookmaker[] = [
   { slug: "unibet", name: "Unibet", color: "#3FB877", region: "eu" },
   { slug: "tipico", name: "Tipico", color: "#FF5148", region: "eu" },
   { slug: "sisal", name: "Sisal", color: "#4C9FE0", region: "eu" },
-  { slug: "888sport", name: "888sport", color: "#FF9A3D", region: "eu" },
-  { slug: "williamhill", name: "William Hill", color: "#5AA6DC", region: "eu" },
   { slug: "sportium", name: "Sportium", color: "#FF6B7A", region: "eu" },
-  { slug: "stake", name: "Stake", color: "#4FB3FF", region: "global" },
 ];

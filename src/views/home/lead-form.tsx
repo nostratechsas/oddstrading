@@ -8,16 +8,16 @@
 
 import { useState } from "react";
 
+import type { SiteContent } from "@/data/content/es";
 import { apiFetch } from "@/lib/api-client";
+
+export interface LeadFormProps {
+  content: SiteContent["cta"];
+}
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-const MESSAGES: Record<Exclude<Status, "idle" | "sending">, string> = {
-  sent: "¡Listo! Te escribimos en menos de 24 horas hábiles para agendar la demo.",
-  error: "No pudimos registrar tu correo. Inténtalo de nuevo en un momento.",
-};
-
-export const LeadForm = () => {
+export const LeadForm = ({ content }: LeadFormProps) => {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [hint, setHint] = useState("");
@@ -28,7 +28,7 @@ export const LeadForm = () => {
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
       setStatus("error");
-      setHint("Escribe un correo válido para continuar.");
+      setHint(content.invalid);
       return;
     }
 
@@ -37,17 +37,17 @@ export const LeadForm = () => {
       await apiFetch<{ received: boolean }>("/api/contact", {
         method: "POST",
         body: JSON.stringify({
-          name: "Lead landing",
+          name: "Landing lead",
           email: email.trim(),
-          message: "Solicitud de demo técnica desde la landing de OddsTrading.",
+          message: "Demo request from the OddsTrading landing page.",
         }),
       });
       setEmail("");
       setStatus("sent");
-      setHint(MESSAGES.sent);
+      setHint(content.sent);
     } catch {
       setStatus("error");
-      setHint(MESSAGES.error);
+      setHint(content.error);
     }
   };
 
@@ -55,14 +55,14 @@ export const LeadForm = () => {
     <form onSubmit={submit} noValidate className="mt-3 flex w-full flex-col items-center gap-4">
       <div className="flex w-full flex-wrap justify-center gap-2.5">
         <label htmlFor="lead-email" className="sr-only">
-          Correo de trabajo
+          {content.emailLabel}
         </label>
         <input
           id="lead-email"
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="tu@empresa.com"
+          placeholder={content.placeholder}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className="w-full max-w-[21rem] rounded-pill border border-border-hairline-strong bg-surface-raised px-6 py-3.5 text-[0.9375rem] transition-colors duration-[var(--duration-fast)] ease-entrance placeholder:text-foreground-subtle focus:border-accent-soft-strong focus:outline-none"
@@ -72,7 +72,7 @@ export const LeadForm = () => {
           disabled={status === "sending"}
           className="group inline-flex items-center gap-3 rounded-pill border border-transparent bg-action-primary py-2.5 pr-2.5 pl-6 text-base font-medium tracking-tight text-action-primary-foreground transition-colors duration-[var(--duration-fast)] ease-entrance hover:bg-action-primary-hover disabled:opacity-60"
         >
-          {status === "sending" ? "Enviando…" : "Solicitar demo"}
+          {status === "sending" ? content.sending : content.submit}
           <span
             aria-hidden="true"
             className="grid h-8.5 w-8.5 shrink-0 place-items-center rounded-pill bg-background/15 transition-transform duration-[var(--duration-normal)] ease-entrance group-hover:translate-x-0.5 group-hover:-translate-y-px"

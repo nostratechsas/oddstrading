@@ -8,6 +8,31 @@ updated: 2026-07-25
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-07-29 (light theme, English-first, real logos)
+
+- **Light theme, and it is now the default.** Both palettes live in Tier 2 of
+  `globals.css` and nowhere else; `data-theme="dark"` on `<html>` flips them.
+  The light theme binds its own deeper brand shades — the mint that reads on
+  `#050505` fails contrast on paper. Two new theme tokens carry what colour
+  alone cannot: `--logo-plate` and the `--video-blend` / `--video-opacity` pair
+  the hero film needs (`screen` on ink, `multiply` on paper). New
+  `hooks/use-theme.ts` (zustand + localStorage), `ThemeToggle`, and an inline
+  bootstrap script in the root layout so there is no theme flash.
+- **English is the default locale; Spanish moved to `/es`.** Content now lives in
+  `data/content/{en,es}.ts` with `SiteContent` inferred from `es.ts`, so a
+  missing key fails the build. `HomeView` and `CheckoutView` take a `content`
+  prop, which made `/`, `/es`, `/checkout` and `/es/checkout` the same tree with
+  a different dictionary. The old `data/mocks/{home,plans,checkout}.ts` are gone.
+- **`LocaleNotice`** — a spring-driven side panel offering the other language,
+  dismissal remembered per direction. It links between routes rather than
+  switching client-side, so both languages stay indexable.
+- **Real bookmaker logos.** Eight official files (DraftKings, BetMGM, William
+  Hill, Ladbrokes, 888sport, Stake, 22bet, BetRivers) trimmed from their 4K
+  masters into `public/assets/bookmakers/`. They are mostly dark-on-transparent,
+  so a logo tile now renders on a `--logo-plate` chip; operators still awaiting a
+  file keep the brand-colour treatment. See [[decisions-log]] ADR-0021.
+- Cookie banner and preferences modal back to English, matching the default locale.
+
 ## 2026-07-29 (responsive fixes)
 
 - **`BrandLockup` is sized with `max-h`, not `h`.** A fixed height made it an

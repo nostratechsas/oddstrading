@@ -7,29 +7,29 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
-import type { CodeSample } from "@/data/mocks/home";
+import type { SiteContent } from "@/data/content/es";
+import type { CodeSample } from "@/data/content/shapes";
 
 import { CodePanel } from "./code-panel";
 
 export interface IntegrationSectionProps {
-  steps: readonly { index: string; title: string; body: string }[];
+  content: SiteContent["integration"];
   samples: readonly CodeSample[];
-  sdks: readonly { name: string; command: string }[];
 }
 
-export const IntegrationSection = ({ steps, samples, sdks }: IntegrationSectionProps) => (
-  <section id="integracion" className="py-20 md:py-28">
+export const IntegrationSection = ({ content, samples }: IntegrationSectionProps) => {
+  const { steps, sdks } = content;
+
+  return (
+  <section id="integration" className="py-20 md:py-28">
     <Shell>
       <header className="mb-12 flex max-w-[62ch] flex-col items-start gap-5">
         <Reveal>
-          <Eyebrow>Integración</Eyebrow>
+          <Eyebrow>{content.eyebrow}</Eyebrow>
         </Reveal>
-        <SectionHeading lead="De la API key" muted="a producción, hoy." />
+        <SectionHeading lead={content.headline} muted={content.headlineMuted} />
         <Reveal step={2}>
-          <p className="max-w-[52ch] text-foreground-muted">
-            JSON plano, paginación predecible y SDKs oficiales. La primera cuota llega antes de
-            que termines el café.
-          </p>
+          <p className="max-w-[52ch] text-foreground-muted">{content.lede}</p>
         </Reveal>
       </header>
 
@@ -52,7 +52,12 @@ export const IntegrationSection = ({ steps, samples, sdks }: IntegrationSectionP
         </Reveal>
 
         <Reveal step={1} className="min-w-0">
-          <CodePanel samples={samples} />
+          <CodePanel
+            samples={samples}
+            tablistLabel={content.tablistLabel}
+            copyLabel={content.copy}
+            copiedLabel={content.copied}
+          />
         </Reveal>
       </div>
 
@@ -71,4 +76,5 @@ export const IntegrationSection = ({ steps, samples, sdks }: IntegrationSectionP
       </Reveal>
     </Shell>
   </section>
-);
+  );
+};

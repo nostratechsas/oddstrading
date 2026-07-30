@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { BrandLockup } from "@/components/common/brand-lockup";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { ActionLink } from "@/components/ui/action-link";
 
 export interface SiteHeaderProps {
@@ -18,9 +19,20 @@ export interface SiteHeaderProps {
   mark: string;
   wordmark: string;
   logoAlt: string;
+  /** Localised labels for the header's own controls. */
+  labels: { signIn: string; cta: string; theme: string; menuOpen: string; menuClose: string };
+  /** Route the CTA points at, so the Spanish tree keeps its prefix. */
+  ctaHref: string;
 }
 
-export const SiteHeader = ({ links, mark, wordmark, logoAlt }: SiteHeaderProps) => {
+export const SiteHeader = ({
+  links,
+  mark,
+  wordmark,
+  logoAlt,
+  labels,
+  ctaHref,
+}: SiteHeaderProps) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -57,7 +69,7 @@ export const SiteHeader = ({ links, mark, wordmark, logoAlt }: SiteHeaderProps) 
     <>
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 flex justify-center px-5 pt-4 md:px-10">
         <nav
-          aria-label="Principal"
+          aria-label={logoAlt}
           className="pointer-events-auto flex w-full max-w-shell items-center gap-6 rounded-pill border border-border-hairline bg-background-overlay py-3 pr-3 pl-6 shadow-[inset_0_1px_0_var(--surface-strong)] backdrop-blur-2xl"
         >
           <Link href="/" className="flex min-w-0 items-center" aria-label={`${logoAlt}, inicio`}>
@@ -77,27 +89,31 @@ export const SiteHeader = ({ links, mark, wordmark, logoAlt }: SiteHeaderProps) 
             ))}
           </ul>
 
-          <div className="hidden items-center gap-5 lg:flex">
+          <div className="hidden items-center gap-4 lg:flex">
+            <ThemeToggle label={labels.theme} />
             <Link
-              href="/#contacto"
+              href={`${ctaHref.replace("/checkout", "")}/#contacto`}
               className="text-sm text-foreground-muted transition-colors duration-[var(--duration-fast)] ease-entrance hover:text-foreground"
             >
-              Iniciar sesión
+              {labels.signIn}
             </Link>
-            <ActionLink href="/checkout">Contratar</ActionLink>
+            <ActionLink href={ctaHref}>{labels.cta}</ActionLink>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            aria-expanded={open}
-            aria-controls="menu-movil"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            className="relative ml-auto grid h-10 w-10 place-items-center rounded-pill border border-border-hairline-strong bg-surface-raised lg:hidden"
-          >
-            <animated.span style={topBar} className="absolute h-px w-4 rounded-pill bg-foreground" />
-            <animated.span style={bottomBar} className="absolute h-px w-4 rounded-pill bg-foreground" />
-          </button>
+          <div className="ml-auto flex items-center gap-3 lg:hidden">
+            <ThemeToggle label={labels.theme} />
+            <button
+              type="button"
+              onClick={() => setOpen((value) => !value)}
+              aria-expanded={open}
+              aria-controls="menu-movil"
+              aria-label={open ? labels.menuClose : labels.menuOpen}
+              className="relative grid h-10 w-10 place-items-center rounded-pill border border-border-hairline-strong bg-surface-raised"
+            >
+              <animated.span style={topBar} className="absolute h-px w-4 rounded-pill bg-foreground" />
+              <animated.span style={bottomBar} className="absolute h-px w-4 rounded-pill bg-foreground" />
+            </button>
+          </div>
         </nav>
       </header>
 
@@ -112,8 +128,8 @@ export const SiteHeader = ({ links, mark, wordmark, logoAlt }: SiteHeaderProps) 
             if (!link) {
               return (
                 <animated.div key="cta" style={style} className="mt-8">
-                  <ActionLink href="/checkout" size="lg" onClick={() => setOpen(false)}>
-                    Contratar
+                  <ActionLink href={ctaHref} size="lg" onClick={() => setOpen(false)}>
+                    {labels.cta}
                   </ActionLink>
                 </animated.div>
               );

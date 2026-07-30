@@ -8,11 +8,14 @@
 import { useId, useState } from "react";
 
 import { Bezel } from "@/components/ui/bezel";
-import type { CodeSample } from "@/data/mocks/home";
+import type { CodeSample } from "@/data/content/shapes";
 import { tokenizeLine, type TokenKind } from "@/utils/code/tokenize";
 
 export interface CodePanelProps {
   samples: readonly CodeSample[];
+  tablistLabel: string;
+  copyLabel: string;
+  copiedLabel: string;
 }
 
 const TONES: Record<TokenKind, string> = {
@@ -23,7 +26,12 @@ const TONES: Record<TokenKind, string> = {
   keyword: "text-accent-code-key",
 };
 
-export const CodePanel = ({ samples }: CodePanelProps) => {
+export const CodePanel = ({
+  samples,
+  tablistLabel,
+  copyLabel,
+  copiedLabel,
+}: CodePanelProps) => {
   const [active, setActive] = useState(samples[0].id);
   const [copied, setCopied] = useState(false);
   const baseId = useId();
@@ -42,7 +50,7 @@ export const CodePanel = ({ samples }: CodePanelProps) => {
   return (
     <Bezel innerClassName="overflow-hidden">
       <div className="flex items-center justify-between gap-4 border-b border-border-hairline p-3">
-        <div role="tablist" aria-label="Ejemplos de código" className="flex gap-1">
+        <div role="tablist" aria-label={tablistLabel} className="flex gap-1">
           {samples.map((item) => {
             const selected = item.id === active;
             return (
@@ -70,7 +78,7 @@ export const CodePanel = ({ samples }: CodePanelProps) => {
           onClick={copy}
           className="rounded-pill border border-border-hairline px-3.5 py-1.5 text-xs text-foreground-muted transition-colors duration-[var(--duration-fast)] ease-entrance hover:border-accent-soft-strong hover:text-accent-emphasis"
         >
-          {copied ? "Copiado" : "Copiar"}
+          {copied ? copiedLabel : copyLabel}
         </button>
       </div>
 

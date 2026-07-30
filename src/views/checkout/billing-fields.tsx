@@ -7,7 +7,8 @@
 "use client";
 
 import { SelectField, TextField } from "@/components/ui/field";
-import type { CountryOption } from "@/data/mocks/checkout";
+import type { SiteContent } from "@/data/content/es";
+import type { CountryOption } from "@/data/content/shapes";
 
 export interface BillingData {
   entity: "company" | "individual";
@@ -23,13 +24,20 @@ export interface BillingData {
 }
 
 export interface BillingFieldsProps {
+  labels: SiteContent["checkout"]["billing"];
   countries: readonly CountryOption[];
   value: BillingData;
   errors: Partial<Record<keyof BillingData, string>>;
   onChange: <K extends keyof BillingData>(key: K, next: BillingData[K]) => void;
 }
 
-export const BillingFields = ({ countries, value, errors, onChange }: BillingFieldsProps) => {
+export const BillingFields = ({
+  labels,
+  countries,
+  value,
+  errors,
+  onChange,
+}: BillingFieldsProps) => {
   const country = countries.find((item) => item.code === value.country) ?? countries[0];
   const isCompany = value.entity === "company";
 
@@ -37,7 +45,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
     <div className="flex flex-col gap-5">
       <fieldset className="flex flex-wrap gap-2">
         <legend className="mb-2 text-xs tracking-wide text-foreground-muted">
-          Tipo de cuenta
+          {labels.accountType}
         </legend>
         {(["company", "individual"] as const).map((option) => (
           <label
@@ -56,7 +64,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
               onChange={() => onChange("entity", option)}
               className="sr-only"
             />
-            {option === "company" ? "Empresa" : "Persona natural"}
+            {option === "company" ? labels.company : labels.individual}
           </label>
         ))}
       </fieldset>
@@ -65,10 +73,9 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
         <TextField
           id="legalName"
           name="legalName"
-          label={isCompany ? "Razón social" : "Nombre completo"}
+          label={isCompany ? labels.legalNameCompany : labels.legalNameIndividual}
           value={value.legalName}
           onChange={(next) => onChange("legalName", next)}
-          placeholder={isCompany ? "OddsTrading Analytics S.A.S." : "Ana Restrepo"}
           autoComplete={isCompany ? "organization" : "name"}
           hint={errors.legalName}
           invalid={Boolean(errors.legalName)}
@@ -77,7 +84,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
         <SelectField
           id="country"
           name="country"
-          label="País de facturación"
+          label={labels.country}
           value={value.country}
           onChange={(next) => onChange("country", next)}
           options={countries.map((item) => ({ value: item.code, label: item.label }))}
@@ -85,7 +92,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
         <TextField
           id="taxId"
           name="taxId"
-          label={`Identificación fiscal (${country.taxId})`}
+          label={`${labels.taxId} (${country.taxId})`}
           value={value.taxId}
           onChange={(next) => onChange("taxId", next)}
           placeholder={country.taxId}
@@ -96,7 +103,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
         <TextField
           id="contactName"
           name="contactName"
-          label="Persona de contacto"
+          label={labels.contactName}
           value={value.contactName}
           onChange={(next) => onChange("contactName", next)}
           autoComplete="name"
@@ -108,10 +115,10 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
           id="email"
           name="email"
           type="email"
-          label="Correo de facturación"
+          label={labels.email}
           value={value.email}
           onChange={(next) => onChange("email", next)}
-          placeholder="facturacion@empresa.com"
+          placeholder={labels.emailPlaceholder}
           autoComplete="email"
           hint={errors.email}
           invalid={Boolean(errors.email)}
@@ -121,17 +128,15 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
           id="phone"
           name="phone"
           type="tel"
-          label="Teléfono"
+          label={labels.phone}
           value={value.phone}
           onChange={(next) => onChange("phone", next)}
           autoComplete="tel"
-          hint={errors.phone}
-          invalid={Boolean(errors.phone)}
         />
         <TextField
           id="address"
           name="address"
-          label="Dirección fiscal"
+          label={labels.address}
           value={value.address}
           onChange={(next) => onChange("address", next)}
           autoComplete="street-address"
@@ -143,7 +148,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
         <TextField
           id="city"
           name="city"
-          label="Ciudad"
+          label={labels.city}
           value={value.city}
           onChange={(next) => onChange("city", next)}
           autoComplete="address-level2"
@@ -154,7 +159,7 @@ export const BillingFields = ({ countries, value, errors, onChange }: BillingFie
         <TextField
           id="postalCode"
           name="postalCode"
-          label="Código postal"
+          label={labels.postalCode}
           value={value.postalCode}
           onChange={(next) => onChange("postalCode", next)}
           autoComplete="postal-code"

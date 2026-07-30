@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 
-import { en } from "@/data/content/en";
+import { es } from "@/data/content/es";
 import { generateMetadata as buildMetadata } from "@/utils/seo/generate-page-metadata";
 import { CheckoutView } from "@/views/checkout";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Checkout — OddsTrading",
+  title: "Contratar — OddsTrading",
   description:
-    "Pick your OddsTrading plan, fill in your billing details and activate your real-time odds licence.",
-  url: "/checkout",
+    "Elige tu plan de OddsTrading, completa los datos de facturación y activa tu licencia de cuotas en tiempo real.",
+  url: "/es/checkout",
 });
 
-export default async function Checkout({
+export default async function CheckoutEs({
   searchParams,
 }: {
   searchParams: Promise<{ plan?: string }>;
 }) {
   const { plan } = await searchParams;
-  return <CheckoutView content={en} plan={plan} />;
+  return <CheckoutView content={es} plan={plan} />;
 }

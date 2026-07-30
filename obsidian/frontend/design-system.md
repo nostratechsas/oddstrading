@@ -150,10 +150,27 @@ and whose wordmark closes on **mint**, over an OLED ink canvas.
   `--radius-control`, `--radius-pill`, `--container-shell`, `--text-display`,
   `--text-headline`.
 
-> [!note] Why the palette has no dark-mode override
-> The design is single-theme by intent — the brand hues are tuned for contrast
-> against `#050505` and would need re-picking, not inverting, on a light canvas.
-> Tier 2 is still the layer to override if that changes.
+### Both themes live in Tier 2
+
+Light is the **default**; `data-theme="dark"` on `<html>` selects the other. Both
+palettes are defined in Tier 2 and nowhere else, which is exactly what the
+indirection exists for.
+
+> [!warning] A light theme is not the dark one inverted
+> The light palette binds **its own** brand shades (`--raw-color-brand-mint-700`
+> and friends). The mint that reads on `#050505` fails contrast on paper, so
+> flipping the neutrals alone produces unreadable accents.
+
+Two theme tokens carry what colour alone cannot:
+
+| Token | Why it must be themed |
+|-------|----------------------|
+| `--logo-plate` | Bookmaker logos are mostly dark-on-transparent, so they always need a light chip |
+| `--video-blend` / `--video-opacity` | The hero film has no alpha: `screen` knocks its black out on ink, `multiply` keeps it readable on paper |
+
+`prefers-color-scheme` is deliberately **not** synced — light is the designed
+default, not a fallback. The choice is stored in `localStorage` and applied by a
+blocking inline script in the root layout, so there is no theme flash.
 
 `@layer components` holds exactly two entries, both genuine ADR-0012
 exceptions: `.tick-marker::before` (a rotated two-border checkmark) and the

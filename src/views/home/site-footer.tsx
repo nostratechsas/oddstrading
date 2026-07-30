@@ -6,28 +6,17 @@ import Link from "next/link";
 
 import { BrandLockup } from "@/components/common/brand-lockup";
 import { Shell } from "@/components/ui/shell";
+import type { SiteContent } from "@/data/content/es";
 
 export interface SiteFooterProps {
-  columns: readonly { title: string; links: readonly { href: string; label: string }[] }[];
+  content: SiteContent["footer"];
   mark: string;
   wordmark: string;
   logoAlt: string;
-  tagline: string;
   email: string;
-  legal: string;
-  compliance: string;
 }
 
-export const SiteFooter = ({
-  columns,
-  mark,
-  wordmark,
-  logoAlt,
-  tagline,
-  email,
-  legal,
-  compliance,
-}: SiteFooterProps) => (
+export const SiteFooter = ({ content, mark, wordmark, logoAlt, email }: SiteFooterProps) => (
   <footer className="border-t border-border-hairline bg-background-elevated/60 pt-16 pb-10">
     <Shell>
       {/* `minmax(0,…)` on the brand track: an `fr` track has an `auto` minimum,
@@ -35,10 +24,10 @@ export const SiteFooter = ({
           crowd the link columns. */}
       <div className="grid gap-x-8 gap-y-10 md:grid-cols-3 lg:grid-cols-[minmax(0,1.5fr)_repeat(4,minmax(0,1fr))]">
         <div className="min-w-0 md:col-span-3 lg:col-span-1">
-          <Link href="/" className="inline-flex max-w-full" aria-label={`${logoAlt}, inicio`}>
+          <Link href="/" className="inline-flex max-w-full" aria-label={logoAlt}>
             <BrandLockup mark={mark} wordmark={wordmark} alt={logoAlt} size="lg" />
           </Link>
-          <p className="mt-4 max-w-[30ch] text-sm text-foreground-subtle">{tagline}</p>
+          <p className="mt-4 max-w-[30ch] text-sm text-foreground-subtle">{content.tagline}</p>
           <a
             href={`mailto:${email}`}
             className="mt-4 inline-block text-sm text-accent-emphasis transition-colors duration-[var(--duration-fast)] ease-entrance hover:text-action-primary-hover"
@@ -47,7 +36,7 @@ export const SiteFooter = ({
           </a>
         </div>
 
-        {columns.map((column) => (
+        {content.columns.map((column) => (
           <nav key={column.title} aria-label={column.title} className="flex flex-col gap-3">
             <h2 className="mb-1 text-[0.6875rem] font-medium tracking-[0.18em] text-foreground-subtle uppercase">
               {column.title}
@@ -66,8 +55,8 @@ export const SiteFooter = ({
       </div>
 
       <div className="mt-14 flex flex-wrap justify-between gap-4 border-t border-border-hairline pt-6 text-xs text-foreground-subtle">
-        <span>{legal}</span>
-        <span>{compliance}</span>
+        <span>{content.legal}</span>
+        <span>{content.compliance}</span>
       </div>
     </Shell>
   </footer>

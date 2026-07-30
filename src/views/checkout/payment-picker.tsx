@@ -8,17 +8,18 @@
  */
 "use client";
 
-import type { PaymentMethod } from "@/data/mocks/checkout";
+import type { PaymentMethod } from "@/data/content/shapes";
 
 export interface PaymentPickerProps {
   methods: readonly PaymentMethod[];
   value: string;
   onChange: (id: string) => void;
+  legend: string;
 }
 
-export const PaymentPicker = ({ methods, value, onChange }: PaymentPickerProps) => (
+export const PaymentPicker = ({ methods, value, onChange, legend }: PaymentPickerProps) => (
   <fieldset className="flex flex-col gap-3">
-    <legend className="sr-only">Medio de pago</legend>
+    <legend className="sr-only">{legend}</legend>
     {methods.map((method) => {
       const selected = method.id === value;
       return (

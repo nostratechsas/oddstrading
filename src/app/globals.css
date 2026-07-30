@@ -26,10 +26,34 @@
   --raw-color-brand-mint-300: #7be8a4;
   --raw-color-brand-leaf-500: #45cc6e;
 
-  /* Brand neutrals — the OLED canvas the palette is tuned against. */
+  /* Brand neutrals — the OLED canvas the dark theme is tuned against. */
   --raw-color-brand-ink-950: #050505;
   --raw-color-brand-ink-900: #0a0a0c;
   --raw-color-brand-ink-800: #0e0e11;
+
+  /* Light-theme neutrals. Deeper brand shades are needed here: the mint that
+     reads on #050505 fails contrast on paper, so the light theme binds its own. */
+  --raw-color-paper-0: #ffffff;
+  --raw-color-paper-100: #f6f7f5;
+  --raw-color-paper-200: #eceee9;
+  --raw-color-ink-900: #0c1310;
+  --raw-color-ink-700: #3b4642;
+  --raw-color-ink-500: #6b7671;
+  --raw-color-brand-mint-700: #0f9c66;
+  --raw-color-brand-mint-800: #0a7a4f;
+  --raw-color-brand-azure-700: #0f66a8;
+  --raw-color-brand-teal-700: #0e8f88;
+  --raw-color-brand-leaf-700: #2f9a52;
+
+  /* Alpha ramps on ink, for light-theme surfaces and hairlines. */
+  --raw-color-alpha-ink-04: rgb(12 19 16 / 0.04);
+  --raw-color-alpha-ink-06: rgb(12 19 16 / 0.06);
+  --raw-color-alpha-ink-10: rgb(12 19 16 / 0.1);
+  --raw-color-alpha-ink-16: rgb(12 19 16 / 0.16);
+  --raw-color-alpha-paper-88: rgb(255 255 255 / 0.88);
+  --raw-color-alpha-mint-12: rgb(15 156 102 / 0.12);
+  --raw-color-alpha-mint-24: rgb(15 156 102 / 0.24);
+  --raw-color-signal-down-700: #c9313f;
 
   /* Alpha ramps — glass surfaces, hairlines and muted copy. */
   --raw-color-alpha-white-03: rgb(255 255 255 / 0.03);
@@ -69,11 +93,69 @@
 /* ---------------------------------------------------------------------------
    TIER 2 — SEMANTIC  (role names, no namespace prefix)
    Purpose, not appearance. Always `var(--raw-*)` — never a literal.
-   This is the themeable layer: dark mode overrides happen HERE, which is why
-   these are separate from the @theme bindings below (see the note there).
+   This is the themeable layer: BOTH themes are defined here and nowhere else,
+   which is why these are separate from the @theme bindings below (see the note
+   there). Light is the default; `data-theme="dark"` on <html> flips it.
    Grammar: --<role>[-<variant>][-<state>]
    --------------------------------------------------------------------------- */
 :root {
+  --background: var(--raw-color-paper-100);
+  --background-elevated: var(--raw-color-paper-0);
+  --background-overlay: var(--raw-color-alpha-paper-88);
+
+  --foreground: var(--raw-color-ink-900);
+  --foreground-muted: var(--raw-color-ink-700);
+  --foreground-subtle: var(--raw-color-ink-500);
+
+  --surface-glass: var(--raw-color-alpha-ink-04);
+  --surface-raised: var(--raw-color-alpha-ink-06);
+  --surface-strong: var(--raw-color-alpha-ink-10);
+
+  --border-hairline: var(--raw-color-alpha-ink-10);
+  --border-hairline-strong: var(--raw-color-alpha-ink-16);
+
+  --action-primary: var(--raw-color-brand-mint-700);
+  --action-primary-hover: var(--raw-color-brand-mint-800);
+  --action-primary-foreground: var(--raw-color-paper-0);
+  --action-neutral: var(--raw-color-alpha-ink-06);
+  --action-neutral-hover: var(--raw-color-alpha-ink-10);
+
+  /* The brand gradient, in reading order across the logotype. */
+  --brand-gradient-start: var(--raw-color-brand-azure-700);
+  --brand-gradient-middle: var(--raw-color-brand-teal-700);
+  --brand-gradient-end: var(--raw-color-brand-leaf-700);
+  --brand-gradient-tail: var(--raw-color-brand-mint-700);
+
+  /* Categorical accents — one per bookmaker series in the live odds board. */
+  --data-accent-primary: var(--raw-color-brand-mint-700);
+  --data-accent-secondary: var(--raw-color-brand-azure-700);
+  --data-accent-tertiary: var(--raw-color-brand-teal-700);
+  --data-accent-quaternary: var(--raw-color-accent-amber-500);
+
+  --accent-soft: var(--raw-color-alpha-mint-12);
+  --accent-soft-strong: var(--raw-color-alpha-mint-24);
+  --accent-emphasis: var(--raw-color-brand-mint-700);
+  --accent-code-key: var(--raw-color-brand-azure-700);
+  --accent-code-string: var(--raw-color-brand-teal-700);
+
+  --signal-up: var(--raw-color-brand-mint-700);
+  --signal-down: var(--raw-color-signal-down-700);
+
+  /* Chip a bookmaker logo sits on. Real logos are mostly dark-on-transparent,
+     so they always need a light plate regardless of the active theme. */
+  --logo-plate: var(--raw-color-paper-0);
+
+  /* The hero film has no alpha channel, so it is blended, not masked. On paper
+     `multiply` keeps its dark UI readable; `screen` would wash it to white. */
+  --video-blend: multiply;
+  --video-opacity: 0.12;
+
+  --duration-fast: var(--raw-duration-fast);
+  --duration-normal: var(--raw-duration-normal);
+  --duration-slow: var(--raw-duration-slow);
+}
+
+:root[data-theme="dark"] {
   --background: var(--raw-color-brand-ink-950);
   --background-elevated: var(--raw-color-brand-ink-900);
   --background-overlay: var(--raw-color-alpha-ink-70);
@@ -95,13 +177,11 @@
   --action-neutral: var(--raw-color-alpha-white-06);
   --action-neutral-hover: var(--raw-color-alpha-white-18);
 
-  /* The brand gradient, in reading order across the logotype. */
   --brand-gradient-start: var(--raw-color-brand-azure-500);
   --brand-gradient-middle: var(--raw-color-brand-teal-500);
   --brand-gradient-end: var(--raw-color-brand-leaf-500);
   --brand-gradient-tail: var(--raw-color-brand-mint-300);
 
-  /* Categorical accents — one per bookmaker series in the live odds board. */
   --data-accent-primary: var(--raw-color-brand-mint-500);
   --data-accent-secondary: var(--raw-color-brand-azure-500);
   --data-accent-tertiary: var(--raw-color-brand-teal-500);
@@ -116,9 +196,10 @@
   --signal-up: var(--raw-color-signal-up-500);
   --signal-down: var(--raw-color-signal-down-500);
 
-  --duration-fast: var(--raw-duration-fast);
-  --duration-normal: var(--raw-duration-normal);
-  --duration-slow: var(--raw-duration-slow);
+  --logo-plate: var(--raw-color-paper-0);
+
+  --video-blend: screen;
+  --video-opacity: 0.3;
 }
 
 /* ---------------------------------------------------------------------------
@@ -174,6 +255,8 @@
   --color-signal-up: var(--signal-up);
   --color-signal-down: var(--signal-down);
 
+  --color-logo-plate: var(--logo-plate);
+
   --font-sans: var(--font-onest);
 
   /* Leading floor for clipped TextEngine reveals — see
@@ -199,6 +282,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   overflow-x: hidden;
+  /* Theme switching is a discrete state change, so it stays a token-backed CSS
+     transition per ADR-0014 — a spring here would fight every child. */
+  transition:
+    background-color var(--duration-normal) var(--raw-ease-entrance),
+    color var(--duration-normal) var(--raw-ease-entrance);
 }
 
 @layer base {

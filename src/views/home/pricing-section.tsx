@@ -1,8 +1,8 @@
 // 📖 Docs: obsidian/workflows/new-page.md
 /**
  * Pricing — the three licence tiers plus the enterprise strip. Each CTA carries
- * its plan slug to `/checkout`, so the visitor lands on the flow with the tier
- * already selected.
+ * its plan slug to the locale's checkout, so the visitor lands on the flow with
+ * the tier already selected.
  */
 import { ActionLink } from "@/components/ui/action-link";
 import { Bezel } from "@/components/ui/bezel";
@@ -11,32 +11,31 @@ import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
 import { TickList } from "@/components/ui/tick-list";
-import type { Plan } from "@/data/mocks/plans";
+import type { SiteContent } from "@/data/content/es";
 import { formatUsd } from "@/utils/format/currency";
 
 export interface PricingSectionProps {
-  plans: readonly Plan[];
+  content: SiteContent["pricing"];
+  /** Locale route prefix, so the CTA keeps its language. */
+  base: string;
   email: string;
 }
 
-export const PricingSection = ({ plans, email }: PricingSectionProps) => (
-  <section id="precios" className="py-20 md:py-28">
+export const PricingSection = ({ content, base, email }: PricingSectionProps) => (
+  <section id="pricing" className="py-20 md:py-28">
     <Shell>
       <header className="mb-12 flex max-w-[62ch] flex-col items-start gap-5">
         <Reveal>
-          <Eyebrow>Precios</Eyebrow>
+          <Eyebrow>{content.eyebrow}</Eyebrow>
         </Reveal>
-        <SectionHeading lead="Transparente." muted="Sin sorpresas." />
+        <SectionHeading lead={content.headline} muted={content.headlineMuted} />
         <Reveal step={2}>
-          <p className="max-w-[52ch] text-foreground-muted">
-            Licencia mensual en USD, impuestos no incluidos. Todos los planes incluyen la API
-            REST, el esquema unificado y el onboarding con nuestro equipo de integración.
-          </p>
+          <p className="max-w-[52ch] text-foreground-muted">{content.lede}</p>
         </Reveal>
       </header>
 
       <ul className="grid gap-4 lg:grid-cols-3">
-        {plans.map((plan, index) => (
+        {content.plans.map((plan, index) => (
           <Reveal tag="li" key={plan.slug} step={index} className="h-full">
             <Bezel
               glow={plan.featured}
@@ -45,7 +44,7 @@ export const PricingSection = ({ plans, email }: PricingSectionProps) => (
             >
               {plan.featured && (
                 <span className="absolute top-7 right-7 rounded-pill border border-accent-soft-strong bg-accent-soft px-3 py-0.5 text-[0.625rem] tracking-[0.16em] text-accent-emphasis uppercase">
-                  Más elegido
+                  {content.featuredBadge}
                 </span>
               )}
               <h3 className="text-lg font-normal tracking-tight">{plan.name}</h3>
@@ -58,13 +57,13 @@ export const PricingSection = ({ plans, email }: PricingSectionProps) => (
                 <b className="text-5xl font-light tracking-tight tabular-nums">
                   {formatUsd(plan.price)}
                 </b>
-                <span className="text-sm text-foreground-subtle">/mes</span>
+                <span className="text-sm text-foreground-subtle">{content.perMonth}</span>
               </p>
 
               <TickList items={plan.features} className="mb-6" />
 
               <ActionLink
-                href={`/checkout?plan=${plan.slug}`}
+                href={`${base}/checkout?plan=${plan.slug}`}
                 tone={plan.featured ? "primary" : "ghost"}
                 icon={plan.featured ? "arrow" : "chevron"}
                 fullWidth
@@ -81,18 +80,17 @@ export const PricingSection = ({ plans, email }: PricingSectionProps) => (
         <Bezel innerClassName="flex flex-wrap items-center justify-between gap-8 p-9">
           <div>
             <span className="text-[0.625rem] tracking-[0.22em] text-accent-emphasis uppercase">
-              Enterprise
+              {content.enterprise.eyebrow}
             </span>
             <h3 className="mt-3 mb-2 text-2xl font-normal tracking-tight">
-              Infraestructura dedicada, límites a medida
+              {content.enterprise.title}
             </h3>
             <p className="max-w-[56ch] text-[0.9375rem] text-foreground-muted">
-              Nodo privado en tu región, feeds personalizados, contrato con SLA y soporte 24/7
-              con ingeniero asignado. Facturación anual y condiciones a medida.
+              {content.enterprise.body}
             </p>
           </div>
           <ActionLink href={`mailto:${email}`} tone="light" size="lg">
-            Hablar con ventas
+            {content.enterprise.cta}
           </ActionLink>
         </Bezel>
       </Reveal>

@@ -7,24 +7,24 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
-import type { Faq } from "@/data/mocks/home";
+import type { SiteContent } from "@/data/content/es";
 
 export interface FaqSectionProps {
-  items: readonly Faq[];
+  content: SiteContent["faq"];
   email: string;
 }
 
-export const FaqSection = ({ items, email }: FaqSectionProps) => (
+export const FaqSection = ({ content, email }: FaqSectionProps) => (
   <section id="faq" className="py-16 md:py-22">
     <Shell className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-16">
       <header className="flex flex-col items-start gap-5 lg:sticky lg:top-28">
         <Reveal>
-          <Eyebrow>FAQ</Eyebrow>
+          <Eyebrow>{content.eyebrow}</Eyebrow>
         </Reveal>
-        <SectionHeading lead="Preguntas" muted="frecuentes." />
+        <SectionHeading lead={content.headline} muted={content.headlineMuted} />
         <Reveal step={2}>
           <p className="text-foreground-muted">
-            ¿No encuentras lo que buscas? Escríbenos a{" "}
+            {content.ledePrefix}{" "}
             <a
               href={`mailto:${email}`}
               className="text-accent-emphasis transition-colors duration-[var(--duration-fast)] ease-entrance hover:text-action-primary-hover"
@@ -37,7 +37,7 @@ export const FaqSection = ({ items, email }: FaqSectionProps) => (
       </header>
 
       <Reveal tag="div" className="flex flex-col">
-        {items.map((item, index) => (
+        {content.items.map((item, index) => (
           <details
             key={item.question}
             name="faq"

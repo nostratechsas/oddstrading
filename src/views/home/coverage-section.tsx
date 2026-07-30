@@ -13,14 +13,14 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
-import type { CoverageGroup } from "@/data/mocks/home";
+import type { SiteContent } from "@/data/content/es";
 
 export interface CoverageSectionProps {
-  groups: readonly CoverageGroup[];
-  lede: string;
+  content: SiteContent["coverage"];
 }
 
-export const CoverageSection = ({ groups, lede }: CoverageSectionProps) => {
+export const CoverageSection = ({ content }: CoverageSectionProps) => {
+  const groups = content.groups;
   const [active, setActive] = useState(groups[0].id);
   const baseId = useId();
   const group = groups.find((item) => item.id === active) ?? groups[0];
@@ -34,21 +34,21 @@ export const CoverageSection = ({ groups, lede }: CoverageSectionProps) => {
   });
 
   return (
-    <section id="cobertura" className="py-16 md:py-22">
+    <section id="coverage" className="py-16 md:py-22">
       <Shell>
         <header className="mb-10 flex flex-wrap items-end justify-between gap-8">
           <div className="flex flex-col items-start gap-5">
             <Reveal>
-              <Eyebrow>Cobertura</Eyebrow>
+              <Eyebrow>{content.eyebrow}</Eyebrow>
             </Reveal>
-            <SectionHeading lead="Dos continentes," muted="un mismo esquema." />
+            <SectionHeading lead={content.headline} muted={content.headlineMuted} />
           </div>
           <Reveal step={2}>
-            <p className="max-w-[52ch] text-foreground-muted">{lede}</p>
+            <p className="max-w-[52ch] text-foreground-muted">{content.lede}</p>
           </Reveal>
         </header>
 
-        <div role="tablist" aria-label="Regiones y deportes" className="mb-4 flex flex-wrap gap-1.5">
+        <div role="tablist" aria-label={content.tablistLabel} className="mb-4 flex flex-wrap gap-1.5">
           {groups.map((item) => {
             const selected = item.id === active;
             return (
@@ -85,7 +85,7 @@ export const CoverageSection = ({ groups, lede }: CoverageSectionProps) => {
                 {group.items.map((item) => (
                   <li
                     key={`${group.id}-${item.name}-${item.note ?? ""}`}
-                    className="inline-flex items-center gap-2 rounded-pill border border-border-hairline bg-surface-glass px-4 py-2 text-sm text-foreground/85 transition-colors duration-[var(--duration-fast)] ease-entrance hover:bg-surface-raised"
+                    className="inline-flex items-center gap-2 rounded-pill border border-border-hairline bg-surface-glass px-4 py-2 text-sm transition-colors duration-[var(--duration-fast)] ease-entrance hover:bg-surface-raised"
                   >
                     {item.name}
                     {item.note && (

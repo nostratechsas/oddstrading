@@ -9,11 +9,13 @@ import { animated, useSpring } from "@react-spring/web";
 import { useEffect, useState } from "react";
 
 import { Shell } from "@/components/ui/shell";
-import type { Stat } from "@/data/mocks/home";
+import type { Stat } from "@/data/content/shapes";
 import { useDynamicInView } from "@/hooks/animation/use-dynamic-in-view";
 
 export interface StatsBandProps {
   stats: readonly Stat[];
+  /** Accessible name for the band. */
+  label: string;
 }
 
 const StatFigure = ({ stat, run }: { stat: Stat; run: boolean }) => {
@@ -32,7 +34,7 @@ const StatFigure = ({ stat, run }: { stat: Stat; run: boolean }) => {
   );
 };
 
-export const StatsBand = ({ stats }: StatsBandProps) => {
+export const StatsBand = ({ stats, label }: StatsBandProps) => {
   const [setNode, inView] = useDynamicInView({ threshold: 0.4 });
   const [started, setStarted] = useState(false);
 
@@ -41,7 +43,7 @@ export const StatsBand = ({ stats }: StatsBandProps) => {
   }, [inView]);
 
   return (
-    <section aria-label="OddsTrading en cifras" className="py-16">
+    <section aria-label={label} className="py-16">
       <Shell>
         <ul ref={setNode} className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
           {stats.map((stat) => (

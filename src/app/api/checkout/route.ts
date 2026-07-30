@@ -1,14 +1,15 @@
 import { z } from "zod";
 
 import { getServerEnv } from "@/env";
-import { plans } from "@/data/mocks/plans";
+import { en } from "@/data/content/en";
 import { ApiError, handle } from "@/lib/api";
 
 /**
  * Order intake for the checkout flow.
  *
  * The handler is deliberately provider-agnostic: it validates the order, prices
- * it **server-side** from the plan catalogue (never from the client payload),
+ * it **server-side** from the plan catalogue in `data/content` (never from the
+ * client payload),
  * and forwards it to whatever `CHECKOUT_ENDPOINT` points at — a payment
  * provider's session API, a CRM, or a billing webhook. Swap that upstream to go
  * live without touching the UI.
@@ -52,7 +53,9 @@ export const POST = handle(async (req) => {
 
   // Price from the catalogue, never from the request — otherwise a crafted
   // payload could set its own amount.
-  const plan = plans.find((item) => item.slug === order.plan);
+  // The catalogue is locale-independent (same slugs, same prices), so either
+  // dictionary is authoritative for pricing.
+  const plan = en.pricing.plans.find((item) => item.slug === order.plan);
   if (!plan) {
     throw new ApiError(400, "unknown_plan", "El plan solicitado no existe.");
   }

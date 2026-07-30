@@ -10,15 +10,11 @@ import { useEffect, useState } from "react";
 
 import { Bezel } from "@/components/ui/bezel";
 import { PulseDot } from "@/components/ui/pulse-dot";
-import type { OddsRow } from "@/data/mocks/home";
+import type { SiteContent } from "@/data/content/es";
+import type { OddsRow } from "@/data/content/shapes";
 
 export interface LiveBoardProps {
-  competition: string;
-  match: string;
-  rival: string;
-  meta: string;
-  edge: string;
-  rows: readonly OddsRow[];
+  board: SiteContent["board"];
 }
 
 type Direction = "up" | "down" | null;
@@ -37,15 +33,17 @@ const ACCENTS: Record<OddsRow["accent"], string> = {
 
 const COLUMNS = ["home", "draw", "away"] as const;
 
-export const LiveBoard = ({ competition, match, rival, meta, edge, rows }: LiveBoardProps) => {
+export const LiveBoard = ({ board }: LiveBoardProps) => {
+  const rows = board.rows;
+
   // Prices and the flash marker move together, so they live in one state slice:
   // the direction can only be derived from the value it replaces.
-  const [board, setBoard] = useState<BoardState>(() => ({
+  const [state, setState] = useState<BoardState>(() => ({
     odds: rows.map((row) => [row.home, row.draw, row.away]),
     flash: { row: -1, col: -1, dir: null },
   }));
   const [latency, setLatency] = useState(84);
-  const { odds, flash } = board;
+  const { odds, flash } = state;
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -53,7 +51,7 @@ export const LiveBoard = ({ competition, match, rival, meta, edge, rows }: LiveB
       const col = Math.floor(Math.random() * COLUMNS.length);
       const delta = (Math.random() < 0.5 ? -1 : 1) * (Math.random() * 0.06 + 0.01);
 
-      setBoard((current) => {
+      setState((current) => {
         const previous = current.odds[row][col];
         const value = Math.max(1.15, Math.round((previous + delta) * 100) / 100);
         return {
@@ -74,17 +72,19 @@ export const LiveBoard = ({ competition, match, rival, meta, edge, rows }: LiveB
       <div className="flex items-center justify-between">
         <span className="flex items-center gap-2 text-[0.6875rem] tracking-[0.18em] text-foreground-muted uppercase">
           <PulseDot />
-          Feed en vivo
+          {board.live}
         </span>
         <span className="text-xs text-accent-emphasis tabular-nums">{latency} ms</span>
       </div>
 
       <div>
-        <p className="text-[0.6875rem] tracking-wide text-foreground-subtle">{competition}</p>
+        <p className="text-[0.6875rem] tracking-wide text-foreground-subtle">{board.competition}</p>
         <h2 className="mt-1 text-xl font-normal tracking-tight">
-          {match} <span className="px-1 text-base text-foreground-subtle">vs</span> {rival}
+          {board.match}{" "}
+          <span className="px-1 text-base text-foreground-subtle">{board.versus}</span>{" "}
+          {board.rival}
         </h2>
-        <p className="mt-1 text-xs text-foreground-subtle">{meta}</p>
+        <p className="mt-1 text-xs text-foreground-subtle">{board.meta}</p>
       </div>
 
       <ul className="flex flex-col gap-1">
@@ -118,9 +118,10 @@ export const LiveBoard = ({ competition, match, rival, meta, edge, rows }: LiveB
       </ul>
 
       <div className="flex items-center justify-between border-t border-border-hairline pt-3 text-xs text-foreground-subtle">
-        <span>Actualizado en tiempo real</span>
+        <span>{board.footNote}</span>
         <span>
-          Mejor línea <b className="font-medium text-accent-emphasis">{edge}</b> vs. promedio
+          {board.edgeLabel}{" "}
+          <b className="font-medium text-accent-emphasis">{board.edge}</b> {board.edgeSuffix}
         </span>
       </div>
     </Bezel>

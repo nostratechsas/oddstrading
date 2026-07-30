@@ -9,12 +9,12 @@ import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
 import { TickList } from "@/components/ui/tick-list";
-import type { platformContent } from "@/data/mocks/home";
+import type { SiteContent } from "@/data/content/es";
 
 import { CardIcon, type CardIconName } from "./card-icon";
 
 export interface PlatformSectionProps {
-  content: typeof platformContent;
+  content: SiteContent["platform"];
 }
 
 const CardShell = ({
@@ -40,7 +40,7 @@ const CardShell = ({
 );
 
 export const PlatformSection = ({ content }: PlatformSectionProps) => (
-  <section id="plataforma" className="py-20 md:py-28">
+  <section id="platform" className="py-20 md:py-28">
     <Shell>
       <header className="mb-12 flex max-w-[62ch] flex-col items-start gap-5">
         <Reveal>

@@ -2,11 +2,12 @@
 /**
  * Hero backdrop: the brand cover film, composited transparently.
  *
- * The source clip has no alpha channel — its background sits at roughly #131313.
- * `mix-blend-mode: screen` maps black to fully transparent, so only the glowing
- * UI in the footage survives and it reads as a true cut-out over the OLED
- * canvas instead of a video rectangle. A radial veil then fades its edges into
- * the page so there is no visible seam.
+ * The source clip has no alpha channel — its background sits at roughly #131313
+ * — so it is blended rather than masked. The blend mode and opacity come from
+ * theme tokens: `screen` on the OLED canvas maps black to transparent so only
+ * the glowing UI survives; `multiply` on paper keeps that same UI readable
+ * instead of washing it to white. A radial veil then fades the edges into the
+ * page so there is no visible seam either way.
  */
 export interface HeroBackdropProps {
   src: string;
@@ -18,7 +19,7 @@ export const HeroBackdrop = ({ src }: HeroBackdropProps) => (
     className="pointer-events-none absolute inset-x-0 -top-24 -z-1 h-[95vh] overflow-hidden"
   >
     <video
-      className="h-full w-full scale-105 object-cover opacity-30 mix-blend-screen"
+      className="h-full w-full scale-105 object-cover opacity-[var(--video-opacity)] mix-blend-[var(--video-blend)]"
       autoPlay
       muted
       loop

@@ -1,26 +1,13 @@
 /**
- * Home view — a Server Component that assembles the OddsTrading landing page
- * and feeds every section its content from `data/mocks`. Interactivity lives in
- * the client leaves each section imports.
+ * Home view — a Server Component that assembles the landing page for one
+ * locale. Everything it renders comes from the `content` object, so `/` and
+ * `/es` are the same tree with a different dictionary.
  */
+import { LocaleNotice } from "@/components/common/locale-notice";
 import { SiteHeader } from "@/components/common/site-header";
 import { bookmakers } from "@/data/mocks/bookmakers";
-import {
-  brand,
-  codeSamples,
-  coverageGroups,
-  faqs,
-  footerColumns,
-  heroContent,
-  integrationSteps,
-  liveBoard,
-  navLinks,
-  platformContent,
-  sdks,
-  stats,
-  useCases,
-} from "@/data/mocks/home";
-import { plans } from "@/data/mocks/plans";
+import type { SiteContent } from "@/data/content/es";
+import { brand } from "@/data/content/shapes";
 import { getBookmakerLogo } from "@/utils/assets/bookmaker-logos";
 
 import { BookmakerMarquee } from "./bookmaker-marquee";
@@ -35,56 +22,48 @@ import { SiteFooter } from "./site-footer";
 import { StatsBand } from "./stats-band";
 import { UseCasesSection } from "./use-cases-section";
 
-const TRUST = ["99,98% uptime", "Sub-120 ms", "190+ casas", "Soporte en español"];
+export interface HomeViewProps {
+  content: SiteContent;
+}
 
-const COVERAGE_LEDE =
-  "Filtra por región, licencia, deporte o mercado. Si un operador existe y publica cuotas, lo más probable es que ya esté en el feed.";
-
-export const HomeView = () => {
+export const HomeView = ({ content }: HomeViewProps) => {
   // Resolved on the server: a tile renders the official file when one exists
   // under public/assets/bookmakers/, and its colour treatment otherwise.
   const wall = bookmakers.map((item) => ({ ...item, logo: getBookmakerLogo(item.slug) }));
 
   return (
-  <>
-    <SiteHeader
-      links={navLinks}
-      mark={brand.mark}
-      wordmark={brand.wordmark}
-      logoAlt={brand.logoAlt}
-    />
-
-    <main>
-      <Hero
-        eyebrow={heroContent.eyebrow}
-        headline={heroContent.headline}
-        headlineAccent={heroContent.headlineAccent}
-        lede={heroContent.lede}
-        note={heroContent.note}
-        videoSrc={heroContent.videoSrc}
-        board={liveBoard}
+    <div lang={content.htmlLang}>
+      <SiteHeader
+        links={content.nav.links}
+        mark={brand.mark}
+        wordmark={brand.wordmark}
+        logoAlt={brand.logoAlt}
+        labels={content.nav}
+        ctaHref={`${content.base}/checkout`}
       />
-      <BookmakerMarquee items={wall} />
-      <StatsBand stats={stats} />
-      <PlatformSection content={platformContent} />
-      <CoverageSection groups={coverageGroups} lede={COVERAGE_LEDE} />
-      <IntegrationSection steps={integrationSteps} samples={codeSamples} sdks={sdks} />
-      <UseCasesSection items={useCases} />
-      <PricingSection plans={plans} email={brand.email} />
-      <FaqSection items={faqs} email={brand.email} />
-      <CtaSection trust={TRUST} />
-    </main>
 
-    <SiteFooter
-      columns={footerColumns}
-      mark={brand.mark}
-      wordmark={brand.wordmark}
-      logoAlt={brand.logoAlt}
-      tagline={brand.tagline}
-      email={brand.email}
-      legal={brand.legal}
-      compliance={brand.compliance}
-    />
-  </>
+      <LocaleNotice {...content.notice} />
+
+      <main>
+        <Hero content={content} />
+        <BookmakerMarquee items={wall} label={content.wall.label} caption={content.wall.tileCaption} />
+        <StatsBand stats={content.stats} label={content.statsLabel} />
+        <PlatformSection content={content.platform} />
+        <CoverageSection content={content.coverage} />
+        <IntegrationSection content={content.integration} samples={content.codeSamples} />
+        <UseCasesSection content={content.useCases} />
+        <PricingSection content={content.pricing} base={content.base} email={brand.email} />
+        <FaqSection content={content.faq} email={brand.email} />
+        <CtaSection content={content.cta} />
+      </main>
+
+      <SiteFooter
+        content={content.footer}
+        mark={brand.mark}
+        wordmark={brand.wordmark}
+        logoAlt={brand.logoAlt}
+        email={brand.email}
+      />
+    </div>
   );
 };

@@ -8,24 +8,29 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
 
 export interface UseCasesSectionProps {
-  items: readonly { kicker: string; title: string; body: string }[];
+  content: {
+    eyebrow: string;
+    headline: string;
+    headlineMuted: string;
+    items: readonly { kicker: string; title: string; body: string }[];
+  };
 }
 
-export const UseCasesSection = ({ items }: UseCasesSectionProps) => (
+export const UseCasesSection = ({ content }: UseCasesSectionProps) => (
   <section className="py-16 md:py-22">
     <Shell>
       <header className="mb-10 flex flex-col items-start gap-5">
         <Reveal>
-          <Eyebrow>Casos de uso</Eyebrow>
+          <Eyebrow>{content.eyebrow}</Eyebrow>
         </Reveal>
-        <SectionHeading lead="Quién construye" muted="sobre OddsTrading." />
+        <SectionHeading lead={content.headline} muted={content.headlineMuted} />
       </header>
 
       <Reveal
         tag="ul"
         className="grid gap-px border-y border-border-hairline bg-border-hairline md:grid-cols-2 lg:grid-cols-4"
       >
-        {items.map((item) => (
+        {content.items.map((item) => (
           <li
             key={item.kicker}
             className="flex flex-col gap-2.5 bg-background px-6 py-8 transition-colors duration-[var(--duration-normal)] ease-entrance hover:bg-background-elevated"

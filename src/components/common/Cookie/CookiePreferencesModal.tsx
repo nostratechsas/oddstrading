@@ -22,19 +22,19 @@ interface Category {
 const CATEGORIES: Category[] = [
   {
     key: "necessary",
-    title: "Estrictamente necesarias",
-    body: "Necesarias para que el sitio funcione: sesión, seguridad y navegación. No se pueden desactivar.",
+    title: "Strictly necessary",
+    body: "Required for the site to work: sign-in, security and navigation. These cannot be turned off.",
     required: true,
   },
   {
     key: "analytics",
-    title: "Analítica",
-    body: "Estadísticas de uso anonimizadas para saber qué secciones ayudan y cuáles no. No construimos un perfil personal.",
+    title: "Analytics",
+    body: "Anonymised usage stats so we know which sections help and which fall flat. No personal profile is built.",
   },
   {
     key: "marketing",
     title: "Marketing",
-    body: "Nos permite medir el rendimiento de las campañas y volver a mostrarte contenido que dejaste a medias. Puedes desactivarlo cuando quieras.",
+    body: "Lets us measure campaign performance and re-show content you did not finish reading. Opt out any time.",
   },
 ];
 
@@ -116,12 +116,12 @@ export const CookiePreferencesModal = () => {
         >
           <header className="flex items-start justify-between gap-3">
             <h2 id={TITLE_ID} className="text-xl font-medium leading-tight">
-              Preferencias de cookies
+              Cookie preferences
             </h2>
             <button
               type="button"
               onClick={closeModal}
-              aria-label="Cerrar preferencias de cookies"
+              aria-label="Close cookie preferences"
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-foreground/10 text-foreground hover:bg-foreground/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -136,15 +136,15 @@ export const CookiePreferencesModal = () => {
           </header>
 
           <p className="text-sm leading-relaxed text-foreground/60">
-            Elige qué categorías de cookies podemos usar. Puedes cambiarlo cuando
-            quieras. Consulta nuestra{" "}
+            Choose which categories of cookies we may use. You can change this
+            any time. See our{" "}
             <Link
               href="/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
               className="text-foreground underline underline-offset-2"
             >
-              política de privacidad
+              privacy policy
             </Link>
             .
           </p>
@@ -187,13 +187,13 @@ export const CookiePreferencesModal = () => {
 
           <footer className="mt-1 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
             <CookieButton variant="secondary" onClick={rejectAll}>
-              Rechazar todo
+              Reject all
             </CookieButton>
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center">
               <CookieButton variant="secondary" onClick={handleSave}>
-                Guardar preferencias
+                Save preferences
               </CookieButton>
-              <CookieButton onClick={acceptAll}>Aceptar todo</CookieButton>
+              <CookieButton onClick={acceptAll}>Accept all</CookieButton>
             </div>
           </footer>
         </animated.div>
