@@ -1,4 +1,4 @@
-# Agent Guide — next16-claude-starter
+# Agent Guide — oddstrading-web
 
 ## This is NOT the Next.js you know
 
