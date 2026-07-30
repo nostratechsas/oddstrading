@@ -222,6 +222,8 @@ export const es = {
     lede: "Licencia mensual en USD, impuestos no incluidos. Todos los planes incluyen la API REST, el esquema unificado y el onboarding con nuestro equipo de integración.",
     featuredBadge: "Más elegido",
     perMonth: "/mes",
+    coverageCappedLabel: "Límite",
+    coverageOpenLabel: "Cobertura",
     enterprise: {
       eyebrow: "Enterprise",
       title: "Infraestructura dedicada, límites a medida",
@@ -231,24 +233,28 @@ export const es = {
     plans: ([
       {
         slug: "starter", name: "Starter", price: 3000,
-        audience: "Para lanzar tu primer comparador de cuotas.",
-        scope: "Integración 1X2 a la media de mercado",
+        audience: "Para validar la idea con una liga y un mercado.",
+        scope: "1X2 a la media de mercado · tope de 12 casas",
         cta: "Elegir Starter",
+        coverage: { label: "Máximo 12 casas de apuestas integradas", capped: true },
         features: [
           "Integración del mercado 1X2 a la media de mercado",
           "Cuotas pre-match y en vivo",
           "API REST con esquema unificado",
-          "Fútbol y competiciones principales",
+          "Solo fútbol y competiciones principales",
           "Soporte por correo",
         ],
       },
       {
         slug: "pro", name: "Pro", price: 5000, featured: true,
-        audience: "Para producto con varios deportes y mercados.",
-        scope: "Multideporte + mapeo de cuotas mejorado",
+        audience: "Para el producto que sale a competir de verdad.",
+        scope: "Multideporte, sin tope de casas",
         cta: "Elegir Pro",
+        coverage: { label: "Sin el tope de 12 casas del plan Starter", capped: false },
+        valueNote:
+          "USD 2.000 más que Starter y se cae el techo: cobertura sin tope, todos los deportes y los mercados que de verdad se apuestan.",
         features: [
-          "Todo lo del plan Starter",
+          "Todo lo del Starter, sin su tope de 12 casas",
           "Integración a la media de mercado del resto de deportes",
           "Mapeo de cuotas mejorado",
           "Los mercados más apostados y sus variantes",
@@ -261,9 +267,9 @@ export const es = {
         audience: "Para trading, arbitraje y operadores.",
         scope: "40+ casas y feed en tiempo real",
         cta: "Elegir Elite",
+        coverage: { label: "Integración completa de más de 40 casas", capped: false },
         features: [
           "Todo lo del plan Pro",
-          "Integración completa de más de 40 casas de apuestas",
           "Acceso exclusivo a datos en tiempo real",
           "Feed de cuotas por WebSocket sin límite de eventos",
           "Motor de arbitraje y value bets",

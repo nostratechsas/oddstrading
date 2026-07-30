@@ -46,6 +46,18 @@ export interface Plan {
   features: readonly string[];
   cta: string;
   featured?: boolean;
+  /**
+   * How many bookmakers the tier integrates, pulled out of `features` and given
+   * its own row — it is the axis tiers are actually chosen on. `capped: true`
+   * states a ceiling and is styled as the constraint it is; `false` states the
+   * ceiling being lifted.
+   */
+  coverage: { label: string; capped: boolean };
+  /**
+   * Featured tiers only: the one-line case for stepping up from the tier below,
+   * shown against the price.
+   */
+  valueNote?: string;
 }
 
 export interface PaymentMethod {

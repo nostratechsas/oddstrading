@@ -3,6 +3,11 @@
  * Pricing — the three licence tiers plus the enterprise strip. Each CTA carries
  * its plan slug to the locale's checkout, so the visitor lands on the flow with
  * the tier already selected.
+ *
+ * Tiers are compared on bookmaker coverage before anything else, so that line is
+ * lifted out of the feature list into a row of its own and styled as what it is:
+ * a ceiling on Starter, a ceiling lifted on the tiers above. The featured tier
+ * also rides higher than the row and carries the case for the step up.
  */
 import { ActionLink } from "@/components/ui/action-link";
 import { Bezel } from "@/components/ui/bezel";
@@ -34,9 +39,16 @@ export const PricingSection = ({ content, base, email }: PricingSectionProps) =>
         </Reveal>
       </header>
 
-      <ul className="grid gap-4 lg:grid-cols-3">
+      <ul className="grid items-stretch gap-4 lg:grid-cols-3">
         {content.plans.map((plan, index) => (
-          <Reveal tag="li" key={plan.slug} step={index} className="h-full">
+          <Reveal
+            tag="li"
+            key={plan.slug}
+            step={index}
+            // The featured tier breaks the row's top line, so the eye lands on
+            // it before it reads a single price.
+            className={`h-full ${plan.featured ? "lg:-mt-6" : ""}`}
+          >
             <Bezel
               glow={plan.featured}
               className="h-full"
@@ -52,12 +64,40 @@ export const PricingSection = ({ content, base, email }: PricingSectionProps) =>
                 {plan.audience}
               </p>
 
-              <p className="my-2 flex items-baseline gap-1.5 border-b border-border-hairline pb-5">
+              <p className="mt-2 flex items-baseline gap-1.5">
                 <span className="text-xs text-foreground-subtle">USD</span>
                 <b className="text-5xl font-light tracking-tight tabular-nums">
                   {formatUsd(plan.price)}
                 </b>
                 <span className="text-sm text-foreground-subtle">{content.perMonth}</span>
+              </p>
+
+              {plan.valueNote && (
+                <p className="max-w-[34ch] text-[0.8125rem] leading-relaxed text-accent-emphasis">
+                  {plan.valueNote}
+                </p>
+              )}
+
+              {/* The tier's ceiling, given the weight it actually carries in the
+                  decision. Muted and hairlined when it caps you, brand-tinted
+                  when it does not. */}
+              <p
+                className={`mt-3 mb-5 flex flex-col gap-1 rounded-control border px-4 py-3 text-sm ${
+                  plan.coverage.capped
+                    ? "border-border-hairline-strong bg-surface-glass text-foreground-muted"
+                    : "border-accent-soft-strong bg-accent-soft text-accent-emphasis"
+                }`}
+              >
+                <span
+                  className={`text-[0.625rem] tracking-[0.16em] uppercase ${
+                    plan.coverage.capped ? "text-foreground-subtle" : "text-accent-emphasis"
+                  }`}
+                >
+                  {plan.coverage.capped
+                    ? content.coverageCappedLabel
+                    : content.coverageOpenLabel}
+                </span>
+                {plan.coverage.label}
               </p>
 
               <TickList items={plan.features} className="mb-6" />

@@ -1,12 +1,64 @@
 ---
 tags: [meta, changelog]
-updated: 2026-07-25
+updated: 2026-07-29
 ---
 
 # Changelog
 
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
+
+## 2026-07-29 (pricing pushes Pro)
+
+The tiers were three near-identical cards distinguished only by feature-list
+length, so nothing pulled a visitor toward Pro. Coverage is the axis these are
+actually chosen on, so it was lifted out of the feature list and made the
+comparison.
+
+- **`Plan.coverage`** (new, required) — `{ label, capped }`. Rendered as its own
+  row under the price: hairlined and muted when it caps you, brand-tinted when it
+  does not. Starter now publishes its real ceiling — **max 12 bookmakers
+  integrated** — and Pro's row states that ceiling coming off.
+- **`Plan.valueNote`** (new, optional, featured tiers only) — the one-line case
+  for the step up, set against the price in accent.
+- **The featured card breaks the row's top line** (`lg:-mt-6`), so the eye lands
+  on Pro before it reads a price.
+- Starter's `scope` carries the cap too, so it follows the visitor into checkout
+  (`PlanPicker`, `OrderSummary`) rather than disappearing after the landing.
+- Duplicate coverage lines dropped from the Starter and Elite feature lists —
+  they live in the coverage row now.
+
+> [!warning] Pro's own ceiling is unstated
+> Pro's row says the Starter cap is lifted, which is all that was confirmed. If
+> Pro has its own bookmaker ceiling, that number needs to replace the current
+> phrasing — as written the page implies none below Elite's 40+.
+
+## 2026-07-29 (landing motion: three 21st.dev ports)
+
+Three interactions taken from [21st.dev](https://21st.dev) as **reference** and
+rebuilt on `@react-spring/web`. Nothing was installed — every one of those
+components ships on framer-motion, which hard rule #1 bans. See
+[[decisions-log]] ADR-0022. No dependency changes.
+
+- **`<Odometer>`** (new UI primitive) — a spring per digit rolls a clipped 0–9
+  column, so the hero's live prices and latency figure *move* instead of
+  hard-swapping under a colour flash. Port of "Animated Number Flip".
+- **`<TabRail>`** (new UI primitive) — one pill slides between tabs rather than
+  each tab repainting itself. Port of ibelick's "Animated Tabs". `CoverageSection`
+  and `CodePanel` both use it now (`tone="solid"` / `tone="subtle"`), which
+  retired `CodePanel`'s hand-rolled tablist and gave both sets a full keyboard
+  tablist — roving `tabIndex`, arrows, `Home`/`End` — that neither had.
+- **Directional coverage panel** — the panel now enters from the side the rail
+  moved, so a tab switch reads as travel across one surface. Port of ibelick's
+  "Transition Panel", minus its blur: a filter on a panel that size is not worth
+  the repaint.
+- **Hero film parallax** — the cover film lags the page over one hero-height on
+  `<SpringTrigger mode="scrub">`. Port of Aceternity's "Hero Parallax".
+  `disableOnMobile`, and its drift is capped by the bleed around the frame.
+- **Trap found while porting:** `utils/math.ts` `interpolate()` corrupts CSS
+  transform *strings* — `translateY(0%)` → `translateY(4.5(%)`. `scrub` mode runs
+  through it, so scroll-linked ports must pass plain numbers (`y`, `scale`).
+  Recorded in ADR-0022; not fixed, since the engine is `#do-not-modify`.
 
 ## 2026-07-29 (light theme, English-first, real logos)
 

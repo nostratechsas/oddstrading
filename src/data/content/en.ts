@@ -212,6 +212,8 @@ export const en: SiteContent = {
     lede: "Monthly licence in USD, tax excluded. Every plan includes the REST API, the unified schema and onboarding with our integration team.",
     featuredBadge: "Most chosen",
     perMonth: "/mo",
+    coverageCappedLabel: "Limit",
+    coverageOpenLabel: "Coverage",
     enterprise: {
       eyebrow: "Enterprise",
       title: "Dedicated infrastructure, limits to match",
@@ -221,24 +223,28 @@ export const en: SiteContent = {
     plans: [
       {
         slug: "starter", name: "Starter", price: 3000,
-        audience: "To launch your first odds comparison product.",
-        scope: "1X2 integration at market average",
+        audience: "To prove the idea out on one league, one market.",
+        scope: "1X2 at market average · capped at 12 books",
         cta: "Choose Starter",
+        coverage: { label: "Maximum 12 bookmakers integrated", capped: true },
         features: [
           "1X2 market integration at market average",
           "Pre-match and in-play odds",
           "REST API with unified schema",
-          "Football and major competitions",
+          "Football and major competitions only",
           "Email support",
         ],
       },
       {
         slug: "pro", name: "Pro", price: 5000, featured: true,
-        audience: "For products spanning several sports and markets.",
-        scope: "Multi-sport + improved odds mapping",
+        audience: "For the product that actually goes to market.",
+        scope: "Multi-sport, no cap on books",
         cta: "Choose Pro",
+        coverage: { label: "No 12-bookmaker cap", capped: false },
+        valueNote:
+          "USD 2,000 over Starter and the ceiling comes off: uncapped coverage, every sport, and the markets people actually bet.",
         features: [
-          "Everything in Starter",
+          "Everything in Starter, without its 12-book cap",
           "Market-average integration across the remaining sports",
           "Improved odds mapping",
           "The most-bet markets and their variants",
@@ -251,9 +257,9 @@ export const en: SiteContent = {
         audience: "For trading desks, arbitrage and operators.",
         scope: "40+ books and a real-time feed",
         cta: "Choose Elite",
+        coverage: { label: "Full integration of more than 40 bookmakers", capped: false },
         features: [
           "Everything in Pro",
-          "Full integration of more than 40 bookmakers",
           "Exclusive access to real-time data",
           "WebSocket odds feed with no event cap",
           "Arbitrage and value-bet engines",
