@@ -52,6 +52,46 @@ Feature list. The checkmark is the `.tick-marker::before` pseudo-element in
 `globals.css` `@layer components` — a genuine ADR-0012 exception, since a
 rotated two-border tick cannot be expressed with utilities.
 
+## `<Odometer>` — `odometer.tsx` `"use client"`
+
+Digit-roll readout for a figure that changes in place. Each digit is a column of
+0–9 clipped to one line box; a spring per digit drives the offset, so a price
+ticking 2.05 → 2.11 rolls its last two wheels instead of hard-swapping the text.
+Drives the prices and the latency figure in the hero's `LiveBoard`.
+
+Props: `value`, `decimals` (fixed, so the glyph count never reflows), `className`.
+
+- The mask is `h-[1lh]` — one *inherited* line box, so it tracks the caller's
+  type scale and can never be shorter than the glyphs it clips.
+- The wheels are `aria-hidden`; the formatted value is exposed once from an
+  `sr-only` span, so assistive tech reads "2.11", not thirty digits.
+- Wheels are keyed by **position**, not value. Crossing a digit boundary
+  (9.99 → 10.01) re-slots the row and snaps rather than rolls.
+
+Ported from 21st.dev, not installed — see [[decisions-log]] ADR-0022.
+
+## `<TabRail>` — `tab-rail.tsx` `"use client"`
+
+A real tablist whose selection is marked by **one pill that slides** between
+tabs, instead of each tab repainting its own background. The pill is measured off
+the active button in a layout effect and sprung to that box; the rail wraps, so
+it springs `y`/`height` as well as `x`/`width` and a second-row selection slides
+down to meet it.
+
+Props: `items`, `active`, `onSelect`, `label`, `tabId`, `panelId`, `tone`,
+`size`, `className`. `panelId` may return one shared id — `CodePanel`'s tabs all
+drive the same `<pre>`.
+
+- `tone`: `solid` (foreground-filled pill — the page's own tab sets, e.g.
+  `CoverageSection`) or `subtle` (raised chip inside a bezel's chrome, e.g.
+  `CodePanel`).
+- Full keyboard tablist: roving `tabIndex`, arrows, `Home`/`End`.
+- The pill re-fits **in place** on resize and only travels on a real selection.
+- The selected label waits for the pill to have a box before taking its on-pill
+  styling — see ADR-0022.
+
+Ported from 21st.dev, not installed — see [[decisions-log]] ADR-0022.
+
 ## `<Reveal>` — `reveal.tsx` `"use client"`
 
 The page's standard scroll entry: a fade-up that settles once. Wraps

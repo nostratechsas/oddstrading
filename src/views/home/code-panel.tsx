@@ -5,9 +5,10 @@
  */
 "use client";
 
-import { useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 
 import { Bezel } from "@/components/ui/bezel";
+import { TabRail } from "@/components/ui/tab-rail";
 import type { CodeSample } from "@/data/content/shapes";
 import { tokenizeLine, type TokenKind } from "@/utils/code/tokenize";
 
@@ -37,6 +38,10 @@ export const CodePanel = ({
   const baseId = useId();
   const sample = samples.find((item) => item.id === active) ?? samples[0];
 
+  const tabId = useCallback((id: string) => `${baseId}-tab-${id}`, [baseId]);
+  // Every tab drives the same `<pre>`, so they all control one panel id.
+  const panelId = useCallback(() => `${baseId}-panel`, [baseId]);
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(sample.code);
@@ -50,29 +55,16 @@ export const CodePanel = ({
   return (
     <Bezel innerClassName="overflow-hidden">
       <div className="flex items-center justify-between gap-4 border-b border-border-hairline p-3">
-        <div role="tablist" aria-label={tablistLabel} className="flex gap-1">
-          {samples.map((item) => {
-            const selected = item.id === active;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                role="tab"
-                id={`${baseId}-tab-${item.id}`}
-                aria-selected={selected}
-                aria-controls={`${baseId}-panel`}
-                onClick={() => setActive(item.id)}
-                className={`rounded-pill border px-3.5 py-1.5 text-xs transition-colors duration-[var(--duration-fast)] ease-entrance ${
-                  selected
-                    ? "border-border-hairline bg-surface-raised text-foreground"
-                    : "border-transparent text-foreground-subtle hover:text-foreground"
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
+        <TabRail
+          items={samples}
+          active={active}
+          onSelect={setActive}
+          label={tablistLabel}
+          tabId={tabId}
+          panelId={panelId}
+          tone="subtle"
+          size="sm"
+        />
         <button
           type="button"
           onClick={copy}
@@ -83,9 +75,9 @@ export const CodePanel = ({
       </div>
 
       <pre
-        id={`${baseId}-panel`}
+        id={panelId()}
         role="tabpanel"
-        aria-labelledby={`${baseId}-tab-${sample.id}`}
+        aria-labelledby={tabId(sample.id)}
         className="overflow-x-auto p-6 text-[0.8125rem] leading-7"
       >
         <code>

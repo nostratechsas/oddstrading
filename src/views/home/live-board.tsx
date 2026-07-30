@@ -2,13 +2,16 @@
 /**
  * Live odds board — the hero's proof element. Ticks a random cell every ~1.9 s
  * and flashes it up (mint) or down (coral). The flash is a discrete colour
- * change, so it stays a token-backed CSS transition per ADR-0014.
+ * change, so it stays a token-backed CSS transition per ADR-0014; the price
+ * itself rolls on [[Odometer]] so the movement is legible as movement and not
+ * just a colour wash (ADR-0022).
  */
 "use client";
 
 import { useEffect, useState } from "react";
 
 import { Bezel } from "@/components/ui/bezel";
+import { Odometer } from "@/components/ui/odometer";
 import { PulseDot } from "@/components/ui/pulse-dot";
 import type { SiteContent } from "@/data/content/es";
 import type { OddsRow } from "@/data/content/shapes";
@@ -74,7 +77,9 @@ export const LiveBoard = ({ board }: LiveBoardProps) => {
           <PulseDot />
           {board.live}
         </span>
-        <span className="text-xs text-accent-emphasis tabular-nums">{latency} ms</span>
+        <span className="text-xs text-accent-emphasis">
+          <Odometer value={latency} /> ms
+        </span>
       </div>
 
       <div>
@@ -107,9 +112,9 @@ export const LiveBoard = ({ board }: LiveBoardProps) => {
               return (
                 <span
                   key={column}
-                  className={`rounded-md py-0.5 text-center text-[0.8125rem] tabular-nums transition-colors duration-[var(--duration-slow)] ease-entrance ${tone}`}
+                  className={`rounded-md py-0.5 text-center text-[0.8125rem] transition-colors duration-[var(--duration-slow)] ease-entrance ${tone}`}
                 >
-                  {odds[rowIndex][colIndex].toFixed(2)}
+                  <Odometer value={odds[rowIndex][colIndex]} decimals={2} />
                 </span>
               );
             })}

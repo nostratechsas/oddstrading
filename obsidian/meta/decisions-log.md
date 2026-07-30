@@ -1,12 +1,65 @@
 ---
 tags: [meta, decision]
-updated: 2026-07-24
+updated: 2026-07-29
 ---
 
 # Decisions Log (ADRs)
 
 Architecture Decision Records. Each entry captures a choice, its context, and its
 consequences. Use [[templates/adr-note]] for new entries. Newest first.
+
+---
+
+## ADR-0022 — 21st.dev components are ported to springs, never installed
+
+- **Status:** Accepted
+- **Date:** 2026-07-29
+
+**Context.** The landing needed more motion: a live price that reads as moving,
+a tab set whose selection travels, and depth on the hero. [21st.dev](https://21st.dev)
+has well-made components for exactly these — "Animated Number Flip", ibelick's
+"Animated Tabs" and "Transition Panel", Aceternity's "Hero Parallax". Every one
+of them is built on **framer-motion**, which hard rule #1 bans (ADR-0002); their
+shadcn install command would also pull framer-motion into the bundle and leave
+two motion systems fighting over the same page.
+
+**Decision.** Treat 21st.dev as a **design reference, not a dependency**. Take
+the interaction — what moves, in response to what, and roughly how far — and
+rebuild it on `@react-spring/web` and the existing spring components. Nothing is
+installed from the registry, and `package.json` is unchanged.
+
+Three ports landed:
+
+| 21st.dev source | Ported to | Mechanism |
+|---|---|---|
+| Animated Number Flip (Ruixen UI) | [[components/ui\|`<Odometer>`]] | a spring per digit drives a clipped 0–9 column |
+| Animated Tabs (ibelick) | [[components/ui\|`<TabRail>`]] | the pill is measured off the active button and sprung to that box, replacing framer-motion's `layoutId` |
+| Transition Panel (ibelick) | `CoverageSection` | the panel enters from the side the rail moved; direction is held in state beside the selection |
+| Hero Parallax (Aceternity) | `HeroBackdrop` | `<SpringTrigger mode="scrub">` over the hero's own height |
+
+**Consequences.**
+- Ports are **numeric springs only**. `utils/math.ts` `interpolate()` — which
+  `useSpringTrigger` uses in `scrub` mode — mangles CSS transform *strings*:
+  `translateY(0%)` → `to` produces `translateY(4.5(%)`. Pass `y` / `scale` /
+  `opacity` as plain numbers and let react-spring build the transform. A future
+  port that needs percentage travel has to fix `interpolate()` first.
+- A slid pill cannot be styled per-tab, so a tab set that needs one now goes
+  through `<TabRail>`: `tone` picks the treatment (`solid` for the page's own
+  tab sets, `subtle` for a set inside a bezel's chrome). `CodePanel`'s hand-rolled
+  tablist was folded into it so the two do not drift.
+- `<TabRail>` measures in a layout effect, so before hydration there is no pill.
+  The selected label therefore only takes its on-pill styling once the pill has a
+  box — otherwise `solid`'s `text-background` renders over nothing and the label
+  is invisible in the server markup.
+- The hero film's drift is capped by the bleed around it (`DRIFT` < the wrapper's
+  overscan) and is `disableOnMobile`: a full-bleed video is the worst case for
+  scroll-linked repaint and the depth cue barely reads on a phone.
+- Reduced motion needs no per-port handling — `<ReducedMotion>` toggles
+  react-spring's global `skipAnimation`, so every port jumps to its end state.
+
+## Related
+
+[[animation-system]] · [[components/ui]] · [[design-system]]
 
 ---
 
