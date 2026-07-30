@@ -99,7 +99,7 @@ export function CompetitorsTable() {
   return (
     <Card className="flex h-full flex-col">
       <CardHeader>
-        <CardTitle>Top 10 competidores por Colombia</CardTitle>
+        <CardTitle>Top 10 competidores por Ecuador</CardTitle>
         <Select value="Comparación: Margen" className="py-1.5 text-xs" />
       </CardHeader>
 

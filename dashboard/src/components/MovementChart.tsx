@@ -67,14 +67,15 @@ export function MovementChart() {
       <CardHeader className="flex-wrap">
         <CardTitle>Análisis de movimientos</CardTitle>
         <div className="flex items-center gap-2">
-          <Select value="Bet365" className="px-2.5 py-1.5 text-xs" />
+          <Select value="Ecuabet" className="px-2.5 py-1.5 text-xs" />
           <Select value="Últimas 6 horas" className="px-2.5 py-1.5 text-xs" />
         </div>
       </CardHeader>
 
       <div className="px-5">
         <p className="text-sm font-semibold text-ink">
-          Real Madrid vs Betis <span className="ml-1 text-xs font-normal text-faint">1X2</span>
+          Barcelona SC vs Emelec{" "}
+          <span className="ml-1 text-xs font-normal text-faint">1X2</span>
         </p>
         <div className="mt-2 flex items-center gap-4">
           {SERIES.map((series) => (

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { bookieLogos } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
@@ -7,25 +9,49 @@ export interface BookieLogoProps {
   className?: string;
 }
 
+const BOX = { sm: "h-5 w-5", md: "h-6 w-6" } as const;
+
 /**
- * Branded monogram chip. Real bookmaker marks are registered trademarks, so
- * the dashboard ships monograms in each brand's colour instead of unlicensed
- * logo files — drop real assets in later without touching callers.
+ * Bookmaker mark, on a light plate.
+ *
+ * Several of these logos are dark-on-transparent — Ecuabet is flat black — so
+ * they need a light chip regardless of the dark theme, the same treatment the
+ * landing gives its logo wall. Unknown names fall back to a monogram.
  */
 export function BookieLogo({ name, size = "md", className }: BookieLogoProps) {
-  const logo = bookieLogos[name] ?? { bg: "#334155", fg: "#ffffff", label: name.slice(0, 2) };
+  const src = bookieLogos[name];
+
+  if (!src) {
+    return (
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center justify-center rounded-full bg-slate-600 text-[9px] font-bold text-white",
+          BOX[size],
+          className,
+        )}
+        aria-hidden="true"
+      >
+        {name.slice(0, 2)}
+      </span>
+    );
+  }
 
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full font-bold",
-        size === "md" ? "h-6 w-6 text-[9px]" : "h-5 w-5 text-[8px]",
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-0.5 ring-1 ring-line-strong",
+        BOX[size],
         className,
       )}
-      style={{ background: logo.bg, color: logo.fg }}
-      aria-hidden="true"
     >
-      {logo.label}
+      <Image
+        src={src}
+        alt=""
+        aria-hidden="true"
+        width={48}
+        height={48}
+        className="h-full w-full object-contain"
+      />
     </span>
   );
 }

@@ -1,6 +1,9 @@
+import { Shield, Trophy } from "lucide-react";
+
+import { SportIcon } from "@/components/icons/sports";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { newsfeed, quickFilters, sports } from "@/lib/data";
+import { leagues, newsfeed, quickFilters, sports } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -29,9 +32,7 @@ export function Sidebar() {
                 : "text-muted hover:bg-hover hover:text-ink",
             )}
           >
-            <span className="text-sm leading-none" aria-hidden="true">
-              {sport.icon}
-            </span>
+            <SportIcon name={sport.icon} tint={sport.tint} />
             <span className="min-w-0 flex-1 truncate">{sport.name}</span>
             <span
               className={cn(
@@ -50,6 +51,31 @@ export function Sidebar() {
       <a href="#" className="mt-1.5 px-4.5 text-xs text-faint transition-colors duration-150 hover:text-muted">
         Ver todos
       </a>
+
+      <div className="mt-6">
+        <SectionLabel>Ligas</SectionLabel>
+        <nav className="flex flex-col gap-0.5 px-2" aria-label="Ligas">
+          {leagues.map((league) => {
+            const Icon = league.kind === "cup" ? Trophy : Shield;
+            return (
+              <a
+                key={league.name}
+                href="#"
+                className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-muted transition-colors duration-150 hover:bg-hover hover:text-ink"
+              >
+                <Icon
+                  className="h-4 w-4 shrink-0"
+                  style={{ color: league.tint }}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span className="min-w-0 flex-1 truncate">{league.name}</span>
+                <span className="text-xs font-semibold text-up tabular-nums">{league.count}</span>
+              </a>
+            );
+          })}
+        </nav>
+      </div>
 
       <div className="mt-6">
         <SectionLabel>Filtros rápidos</SectionLabel>

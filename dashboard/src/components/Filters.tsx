@@ -1,5 +1,6 @@
 import { CalendarDays, Search } from "lucide-react";
 
+import { FlagEcuador } from "@/components/icons/flags";
 import { Select } from "@/components/ui/select";
 
 export function Filters() {
@@ -8,13 +9,17 @@ export function Filters() {
       <Select
         label="País"
         value={
-          <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true">🇨🇴</span> Colombia
+          <span className="inline-flex items-center gap-2">
+            <FlagEcuador /> Ecuador
           </span>
         }
         className="min-w-[13rem] flex-1 py-2.5 sm:flex-none"
       />
-      <Select label="Liga" value="Primera A" className="min-w-[13rem] flex-1 py-2.5 sm:flex-none" />
+      <Select
+        label="Liga"
+        value="LigaPro Ecuador"
+        className="min-w-[13rem] flex-1 py-2.5 sm:flex-none"
+      />
       <Select label="Evento" value="Todos" className="min-w-[13rem] flex-1 py-2.5 sm:flex-none" />
 
       <div className="ml-auto flex flex-wrap items-center gap-3">
