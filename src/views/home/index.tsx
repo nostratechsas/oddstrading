@@ -27,9 +27,14 @@ export interface HomeViewProps {
 }
 
 export const HomeView = ({ content }: HomeViewProps) => {
-  // Resolved on the server: a tile renders the official file when one exists
-  // under public/assets/bookmakers/, and its colour treatment otherwise.
-  const wall = bookmakers.map((item) => ({ ...item, logo: getBookmakerLogo(item.slug) }));
+  // Resolved on the server. Only operators whose official file is actually on
+  // disk make the wall — the catalogue stays the full registry, so dropping a
+  // licensed file into public/assets/bookmakers/ is still all it takes to add
+  // one back (ADR-0021).
+  const wall = bookmakers.flatMap((item) => {
+    const logo = getBookmakerLogo(item.slug);
+    return logo ? [{ slug: item.slug, name: item.name, logo }] : [];
+  });
 
   return (
     <div lang={content.htmlLang}>
@@ -46,7 +51,7 @@ export const HomeView = ({ content }: HomeViewProps) => {
 
       <main>
         <Hero content={content} />
-        <BookmakerMarquee items={wall} label={content.wall.label} caption={content.wall.tileCaption} />
+        <BookmakerMarquee items={wall} label={content.wall.label} />
         <StatsBand stats={content.stats} label={content.statsLabel} />
         <PlatformSection content={content.platform} />
         <CoverageSection content={content.coverage} />

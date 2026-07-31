@@ -13,19 +13,21 @@ import { BookmakerTile } from "./bookmaker-tile";
 export interface MarqueeItem {
   slug: string;
   name: string;
-  color: string;
-  logo?: string;
+  logo: string;
 }
 
 export interface BookmakerMarqueeProps {
   items: readonly MarqueeItem[];
   /** Accessible name for the wall. */
   label: string;
-  /** Caption under the name on plates without an official logo file. */
-  caption: string;
 }
 
-export const BookmakerMarquee = ({ items, label, caption }: BookmakerMarqueeProps) => {
+/** Tile width (`w-64`) plus the track gap (`gap-4`), in px at the 16px base. */
+const TILE_WIDTH = 272;
+/** One copy must out-run the widest viewport or the wrap shows a bare gap. */
+const MIN_COPY_WIDTH = 2600;
+
+export const BookmakerMarquee = ({ items, label }: BookmakerMarqueeProps) => {
   const track = useSpring({
     from: { x: "0%" },
     to: { x: "-50%" },
@@ -33,15 +35,25 @@ export const BookmakerMarquee = ({ items, label, caption }: BookmakerMarqueeProp
     config: { duration: 52000 },
   });
 
+  // The loop translates by exactly one copy, so a short catalogue has to be
+  // repeated until that copy is wider than the screen — otherwise the tail of
+  // each cycle is empty. Filtering the wall down to licensed logos made this
+  // reachable, so it is computed rather than assumed.
+  if (items.length === 0) return null;
+  const repeats = Math.max(1, Math.ceil(MIN_COPY_WIDTH / (items.length * TILE_WIDTH)));
+  const copy = Array.from({ length: repeats }, () => items).flat();
+
   return (
     <section
       aria-label={label}
       className="relative z-1 mt-20 overflow-hidden border-y border-border-hairline py-6 [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]"
     >
       <animated.ul style={track} className="flex w-max items-center gap-4">
-        {[...items, ...items].map((item, index) => (
+        {[...copy, ...copy].map((item, index) => (
+          // Only the first pass through the real catalogue is announced; every
+          // repeat after it is decorative.
           <li key={`${item.slug}-${index}`} aria-hidden={index >= items.length}>
-            <BookmakerTile name={item.name} color={item.color} logo={item.logo} label={caption} />
+            <BookmakerTile name={item.name} logo={item.logo} />
           </li>
         ))}
       </animated.ul>

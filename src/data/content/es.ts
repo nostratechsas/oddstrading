@@ -75,7 +75,7 @@ export const es = {
     ] as OddsRow[],
   },
 
-  wall: { label: "Casas de apuestas integradas", tileCaption: "Integrado" },
+  wall: { label: "Casas de apuestas integradas" },
 
   stats: [
     { value: 190, suffix: "+", label: "Casas de apuestas" },

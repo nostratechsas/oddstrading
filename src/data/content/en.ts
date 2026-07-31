@@ -65,7 +65,7 @@ export const en: SiteContent = {
     ],
   },
 
-  wall: { label: "Integrated bookmakers", tileCaption: "Integrated" },
+  wall: { label: "Integrated bookmakers" },
 
   stats: [
     { value: 190, suffix: "+", label: "Bookmakers" },
