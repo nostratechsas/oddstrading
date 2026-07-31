@@ -32,6 +32,8 @@ node -v && npm -v
 log "PM2 + Corepack (the landing builds with Yarn 4, the dashboard with npm)"
 npm install -g pm2@latest >/dev/null
 corepack enable
+# No TTY here, so Corepack must not stop to confirm the Yarn download.
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 log "Firewall — SSH and web only"
 ufw allow OpenSSH >/dev/null

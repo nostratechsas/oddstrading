@@ -11,6 +11,10 @@ set -euo pipefail
 ROOT="/var/www/oddstrading"
 SKIP_PULL="${1:-}"
 
+# Corepack asks for confirmation before downloading a pinned package manager.
+# There is no TTY here, so without this the deploy hangs forever on the prompt.
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
 log() { printf '\n\033[1;32m==>\033[0m %s\n' "$1"; }
 
 cd "$ROOT"
