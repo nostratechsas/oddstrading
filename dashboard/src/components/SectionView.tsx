@@ -5,145 +5,94 @@ import { ArbitrageCard } from "@/components/ArbitrageCard";
 import { CompetitorsTable } from "@/components/CompetitorsTable";
 import { EventsTable } from "@/components/EventsTable";
 import { ImprovedOdds } from "@/components/ImprovedOdds";
+import { Locked } from "@/components/Locked";
 import { MarketsWidget } from "@/components/MarketsWidget";
 import { MovementChart } from "@/components/MovementChart";
 import { Rise } from "@/components/Rise";
 import { useDashboard } from "@/lib/store";
 
+/** Section labels, for the lock panel's headline. */
+const LABELS: Record<string, string> = {
+  dashboard: "Dashboard",
+  mercados: "Mercados",
+  alertas: "Alertas",
+  arbitraje: "Arbitraje",
+  analytics: "Analytics",
+};
+
 /**
- * Each nav item is a real view over the same data, not a link to nowhere. The
- * widgets are shared; only the composition changes, so a section never shows a
- * placeholder.
+ * The free tier opens Competidores only, and even there just the filters and
+ * the ranking table. Everything else is blurred behind a padlock with a 15 s
+ * teaser that shows scrambled figures rather than the real feed.
  */
 export function SectionView() {
   const { section } = useDashboard();
 
-  if (section === "mercados") {
+  if (section !== "competidores") {
     return (
-      <div className="grid grid-cols-12 gap-4">
-        <Rise className="col-span-12 xl:col-span-7">
-          <EventsTable />
-        </Rise>
-        <Rise step={1} className="col-span-12 xl:col-span-5">
-          <MarketsWidget />
-        </Rise>
-        <Rise step={2} className="col-span-12">
-          <CompetitorsTable />
-        </Rise>
-      </div>
-    );
-  }
-
-  if (section === "alertas") {
-    return (
-      <div className="grid grid-cols-12 gap-4">
-        <Rise className="col-span-12 lg:col-span-5">
-          <Alerts />
-        </Rise>
-        <Rise step={1} className="col-span-12 lg:col-span-7">
-          <MovementChart />
-        </Rise>
-        <Rise step={2} className="col-span-12">
-          <EventsTable />
-        </Rise>
-      </div>
-    );
-  }
-
-  if (section === "arbitraje") {
-    return (
-      <div className="grid grid-cols-12 gap-4">
-        <Rise className="col-span-12">
-          <ArbitrageCard />
-        </Rise>
-        <Rise step={1} className="col-span-12 xl:col-span-8">
-          <CompetitorsTable />
-        </Rise>
-        <div className="col-span-12 flex flex-col gap-4 xl:col-span-4">
-          <Rise step={2}>
-            <ImprovedOdds />
-          </Rise>
-          <Rise step={3}>
-            <Alerts />
-          </Rise>
-        </div>
-      </div>
-    );
-  }
-
-  if (section === "analytics") {
-    return (
-      <div className="grid grid-cols-12 gap-4">
-        <Rise className="col-span-12 xl:col-span-8">
-          <MovementChart />
-        </Rise>
-        <Rise step={1} className="col-span-12 xl:col-span-4">
-          <MarketsWidget />
-        </Rise>
-        <Rise step={2} className="col-span-12">
-          <CompetitorsTable />
-        </Rise>
-      </div>
-    );
-  }
-
-  if (section === "dashboard") {
-    return (
-      <div className="grid grid-cols-12 gap-4">
-        <Rise className="col-span-12 lg:col-span-6 xl:col-span-5">
-          <EventsTable />
-        </Rise>
-        <Rise step={1} className="col-span-12 lg:col-span-6 xl:col-span-4">
-          <MovementChart />
-        </Rise>
-        <Rise step={2} className="col-span-12 xl:col-span-3">
-          <Alerts />
-        </Rise>
-        <Rise step={3} className="col-span-12 xl:col-span-8">
-          <CompetitorsTable />
-        </Rise>
-        <div className="col-span-12 flex flex-col gap-4 xl:col-span-4">
-          <Rise step={4}>
+      <Locked
+        variant="section"
+        title={`${LABELS[section] ?? "Esta sección"} · desbloquéala con tu suscripción`}
+        className="min-h-[32rem]"
+      >
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 xl:col-span-8">
+            <MovementChart />
+          </div>
+          <div className="col-span-12 flex flex-col gap-4 xl:col-span-4">
             <MarketsWidget />
-          </Rise>
-          <Rise step={5}>
             <ImprovedOdds />
-          </Rise>
-          <Rise step={6}>
-            <ArbitrageCard />
-          </Rise>
+          </div>
+          <div className="col-span-12 lg:col-span-7">
+            <EventsTable />
+          </div>
+          <div className="col-span-12 lg:col-span-5">
+            <Alerts />
+          </div>
         </div>
-      </div>
+      </Locked>
     );
   }
 
-  // "competidores" — the default, and the layout of the reference capture.
   return (
     <div className="grid grid-cols-12 gap-4">
+      {/* Free: the ranking table. */}
       <Rise className="col-span-12 xl:col-span-8">
         <CompetitorsTable />
       </Rise>
 
       <div className="col-span-12 flex flex-col gap-4 xl:col-span-4">
         <Rise step={1}>
-          <MarketsWidget />
+          <Locked>
+            <MarketsWidget />
+          </Locked>
         </Rise>
         <Rise step={2}>
-          <ImprovedOdds />
+          <Locked>
+            <ImprovedOdds />
+          </Locked>
         </Rise>
         <Rise step={3}>
-          <ArbitrageCard />
+          <Locked>
+            <ArbitrageCard />
+          </Locked>
         </Rise>
       </div>
 
       <Rise step={2} className="col-span-12 lg:col-span-6 xl:col-span-5">
-        <EventsTable />
+        <Locked className="h-full">
+          <EventsTable />
+        </Locked>
       </Rise>
       <Rise step={3} className="col-span-12 lg:col-span-6 xl:col-span-4">
-        <MovementChart />
+        <Locked className="h-full">
+          <MovementChart />
+        </Locked>
       </Rise>
       <Rise step={4} className="col-span-12 xl:col-span-3">
-        <Alerts />
+        <Locked className="h-full">
+          <Alerts />
+        </Locked>
       </Rise>
     </div>
   );

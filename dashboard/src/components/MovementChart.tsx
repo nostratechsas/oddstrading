@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { useJitter } from "@/components/Locked";
 import { StatCard } from "@/components/StatCard";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
@@ -73,11 +74,20 @@ const RANGE_POINTS: Record<string, number> = { "6h": 25, "12h": 13, "24h": 9 };
 
 export function MovementChart() {
   const { chartBookie, setChartBookie, chartRange, setChartRange } = useDashboard();
+  const jitter = useJitter();
 
   // A longer window is sampled more coarsely, so the line stays readable
   // instead of turning into noise at the same width.
   const step = Math.max(1, Math.round(25 / (RANGE_POINTS[chartRange] ?? 25)));
-  const points = movementSeries.filter((_, index) => index % step === 0);
+  const points = movementSeries
+    .filter((_, index) => index % step === 0)
+    .map((point, index) => ({
+      ...point,
+      local: jitter(point.local, index * 4),
+      empate: jitter(point.empate, index * 4 + 1),
+      visita: jitter(point.visita, index * 4 + 2),
+      vol: jitter(point.vol, index * 4 + 3),
+    }));
 
   const bookieOptions = eventBookies.map((bookie) => ({ value: bookie, label: bookie }));
 

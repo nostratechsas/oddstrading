@@ -41,24 +41,37 @@ function useDismiss(open: boolean, close: () => void) {
   return ref;
 }
 
+/** "virtual.demo" → "VD" for the avatar chip. */
+const initialsOf = (user: string): string =>
+  user
+    .split(/[.\-_@\s]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("") || user.slice(0, 2).toUpperCase();
+
 export function Header() {
   const router = useRouter();
-  const { section, setSection, notify } = useDashboard();
-  const [light, setLight] = useState(false);
+  const {
+    user,
+    section,
+    setSection,
+    notify,
+    unread,
+    markRead,
+    markAllRead,
+    theme,
+    toggleTheme,
+  } = useDashboard();
   const [bellOpen, setBellOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [read, setRead] = useState(false);
 
   const closeBell = useCallback(() => setBellOpen(false), []);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const bellRef = useDismiss(bellOpen, closeBell);
   const menuRef = useDismiss(menuOpen, closeMenu);
 
-  // The palette is authored for the dark canvas; `light-mode` on the root flips
-  // the semantic tokens in globals.css so the toggle does something real.
-  useEffect(() => {
-    document.documentElement.classList.toggle("light-mode", light);
-  }, [light]);
+  const light = theme === "light";
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -124,7 +137,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => {
-            setLight((current) => !current);
+            toggleTheme();
             notify(light ? "Tema oscuro activado" : "Tema claro activado");
           }}
           aria-label={light ? "Cambiar a tema oscuro" : "Cambiar a tema claro"}
@@ -158,19 +171,16 @@ export function Header() {
         <div ref={bellRef} className="relative">
           <button
             type="button"
-            onClick={() => {
-              setBellOpen((current) => !current);
-              setRead(true);
-            }}
+            onClick={() => setBellOpen((current) => !current)}
             aria-expanded={bellOpen}
             aria-haspopup="dialog"
-            aria-label={`Notificaciones${read ? "" : " (3 sin leer)"}`}
+            aria-label={`Notificaciones${unread.length ? ` (${unread.length} sin leer)` : ""}`}
             className="relative cursor-pointer rounded-full p-2 transition-colors duration-150 hover:bg-hover"
           >
             <Bell className="h-4.5 w-4.5 text-muted" aria-hidden="true" />
-            {!read && (
+            {unread.length > 0 && (
               <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-up text-[9px] font-bold text-white">
-                3
+                {unread.length}
               </span>
             )}
           </button>
@@ -181,27 +191,63 @@ export function Header() {
               aria-label="Notificaciones"
               className="absolute right-0 mt-2 w-80 rounded-card border border-line-strong bg-rail p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.6)]"
             >
-              <p className="px-2.5 py-2 text-[11px] font-semibold tracking-wide text-faint uppercase">
-                Notificaciones
-              </p>
+              <div className="flex items-center justify-between px-2.5 py-2">
+                <p className="text-[11px] font-semibold tracking-wide text-faint uppercase">
+                  Notificaciones
+                </p>
+                {unread.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={markAllRead}
+                    className="cursor-pointer text-[11px] font-medium text-up transition-colors duration-150 hover:text-[#4ade80]"
+                  >
+                    Marcar todas
+                  </button>
+                )}
+              </div>
+
               <ul className="max-h-80 overflow-y-auto">
-                {alerts.map((alert) => (
-                  <li key={alert.title}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSection("alertas");
-                        setBellOpen(false);
-                      }}
-                      className="w-full cursor-pointer rounded-lg px-2.5 py-2 text-left transition-colors duration-150 hover:bg-hover"
-                    >
-                      <span className="block text-[13px] font-medium text-ink">{alert.title}</span>
-                      <span className="block truncate text-xs text-muted">{alert.body}</span>
-                      <span className="block text-[11px] text-faint">{alert.time}</span>
-                    </button>
-                  </li>
-                ))}
+                {alerts.map((alert) => {
+                  const isUnread = unread.includes(alert.title);
+                  return (
+                    <li key={alert.title}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          markRead(alert.title);
+                          setSection("alertas");
+                          setBellOpen(false);
+                        }}
+                        className="flex w-full cursor-pointer gap-2 rounded-lg px-2.5 py-2 text-left transition-colors duration-150 hover:bg-hover"
+                      >
+                        {/* A dot, not just weight — unread state must not rely
+                            on colour or boldness alone. */}
+                        <span
+                          className={cn(
+                            "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
+                            isUnread ? "bg-up" : "bg-transparent",
+                          )}
+                          aria-hidden="true"
+                        />
+                        <span className="min-w-0">
+                          <span
+                            className={cn(
+                              "block text-[13px]",
+                              isUnread ? "font-semibold text-ink" : "text-muted",
+                            )}
+                          >
+                            {alert.title}
+                            {isUnread && <span className="sr-only"> (sin leer)</span>}
+                          </span>
+                          <span className="block truncate text-xs text-muted">{alert.body}</span>
+                          <span className="block text-[11px] text-faint">{alert.time}</span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
+
               <button
                 type="button"
                 onClick={() => {
@@ -229,11 +275,13 @@ export function Header() {
               style={{ background: "linear-gradient(135deg,#475569,#1e293b)" }}
               aria-hidden="true"
             >
-              TP
+              {initialsOf(user)}
             </span>
             <span className="hidden text-left lg:block">
-              <span className="block text-[13px] leading-tight font-semibold">Trader Pro</span>
-              <span className="block text-[11px] leading-tight text-faint">Nivel 4</span>
+              <span className="block max-w-[9rem] truncate text-[13px] leading-tight font-semibold">
+                {user}
+              </span>
+              <span className="block text-[11px] leading-tight text-faint">Plan gratuito</span>
             </span>
             <ChevronDown
               className={cn(
@@ -247,8 +295,13 @@ export function Header() {
           {menuOpen && (
             <div
               role="menu"
-              className="absolute right-0 mt-2 w-52 rounded-card border border-line-strong bg-rail p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.6)]"
+              className="absolute right-0 mt-2 w-56 rounded-card border border-line-strong bg-rail p-1.5 shadow-[0_12px_40px_rgb(0_0_0/0.6)]"
             >
+              <div className="border-b border-line px-2.5 pt-1.5 pb-2.5">
+                <p className="truncate text-[13px] font-semibold text-ink">{user}</p>
+                <p className="text-[11px] text-faint">Plan gratuito · acceso limitado</p>
+              </div>
+
               <button
                 type="button"
                 role="menuitem"
@@ -256,7 +309,7 @@ export function Header() {
                   notify("Perfil disponible en la versión completa");
                   setMenuOpen(false);
                 }}
-                className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-muted transition-colors duration-150 hover:bg-hover hover:text-ink"
+                className="mt-1 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-muted transition-colors duration-150 hover:bg-hover hover:text-ink"
               >
                 <User className="h-4 w-4" aria-hidden="true" /> Mi perfil
               </button>

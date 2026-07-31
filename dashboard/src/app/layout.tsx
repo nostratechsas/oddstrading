@@ -18,9 +18,19 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" className="dark">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-      </body>
+      <head>
+        {/*
+          Stamps the saved theme before first paint. Without it the page renders
+          dark and then snaps to light on hydration — a visible flash on every
+          load for anyone who chose the light theme.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("ot-theme")==="light")document.documentElement.classList.add("light-mode")}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className={`${inter.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

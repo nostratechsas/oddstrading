@@ -1,5 +1,6 @@
 "use client";
 
+import { useJitter } from "@/components/Locked";
 import { Sparkline } from "@/components/Sparkline";
 import { Card, CardHeader, CardLink, CardTitle } from "@/components/ui/card";
 import { useDashboard } from "@/lib/store";
@@ -10,6 +11,7 @@ const PREVIEW = 5;
 
 export function MarketsWidget() {
   const { visibleMarkets, expanded, toggleExpanded, notify, search } = useDashboard();
+  const jitter = useJitter();
 
   const showAll = expanded.markets ?? false;
   const rows = showAll ? visibleMarkets : visibleMarkets.slice(0, PREVIEW);
@@ -45,7 +47,7 @@ export function MarketsWidget() {
                 <span className="text-xs text-faint tabular-nums">{market.rank}</span>
                 <span className="truncate text-[13px] text-ink">{market.name}</span>
                 <span className="text-[13px] font-semibold text-ink tabular-nums">
-                  {market.share}
+                  {jitter(parseFloat(market.share), market.rank).toFixed(1)}%
                 </span>
                 <Sparkline data={market.trend} tone={market.tone} className="ml-auto w-14" />
               </button>

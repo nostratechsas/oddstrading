@@ -4,12 +4,13 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 
-import { competitors, featuredEvents, markets, type Competitor } from "@/lib/data";
+import { alerts, competitors, featuredEvents, markets, type Competitor } from "@/lib/data";
 
 export type Section =
   | "dashboard"
@@ -31,8 +32,19 @@ export interface Draft {
 }
 
 interface DashboardState {
+  /** Signed-in account, read from the session cookie on the server. */
+  user: string;
+
   section: Section;
   setSection: (section: Section) => void;
+
+  /** Titles of notifications still unread. */
+  unread: string[];
+  markRead: (title: string) => void;
+  markAllRead: () => void;
+
+  theme: "dark" | "light";
+  toggleTheme: () => void;
 
   /** Committed filters — what the widgets actually read. */
   filters: Draft;
@@ -81,8 +93,16 @@ const DEFAULTS: Draft = {
 
 const DashboardContext = createContext<DashboardState | null>(null);
 
-export function DashboardProvider({ children }: { children: ReactNode }) {
+export function DashboardProvider({
+  children,
+  user,
+}: {
+  children: ReactNode;
+  user: string;
+}) {
   const [section, setSection] = useState<Section>("competidores");
+  const [unread, setUnread] = useState<string[]>(() => alerts.map((alert) => alert.title));
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [filters, setFilters] = useState<Draft>(DEFAULTS);
   const [draft, setDraftState] = useState<Draft>(DEFAULTS);
   const [sport, setSport] = useState("soccer");
@@ -98,6 +118,28 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const setDraft = useCallback((patch: Partial<Draft>) => {
     setDraftState((current) => ({ ...current, ...patch }));
+  }, []);
+
+  const markRead = useCallback((title: string) => {
+    setUnread((current) => current.filter((item) => item !== title));
+  }, []);
+
+  const markAllRead = useCallback(() => setUnread([]), []);
+
+  // Restore the saved choice before first paint of the toggle. The class also
+  // gets stamped by an inline script in the layout, so there is no flash.
+  useEffect(() => {
+    const saved = window.localStorage.getItem("ot-theme");
+    if (saved === "light" || saved === "dark") setTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light-mode", theme === "light");
+    window.localStorage.setItem("ot-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"));
   }, []);
 
   const notify = useCallback((message: string) => {
@@ -169,8 +211,14 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<DashboardState>(
     () => ({
+      user,
       section,
       setSection,
+      unread,
+      markRead,
+      markAllRead,
+      theme,
+      toggleTheme,
       filters,
       draft,
       setDraft,
@@ -196,7 +244,13 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       notify,
     }),
     [
+      user,
       section,
+      unread,
+      markRead,
+      markAllRead,
+      theme,
+      toggleTheme,
       filters,
       draft,
       setDraft,

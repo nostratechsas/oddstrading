@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { useJitter } from "@/components/Locked";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { eventBookies, type FeaturedEvent } from "@/lib/data";
 import { useDashboard } from "@/lib/store";
@@ -19,6 +20,7 @@ const GRID =
 export function EventsTable() {
   const { visibleEvents, filters, notify, setSection } = useDashboard();
   const [tab, setTab] = useState<FeaturedEvent["status"]>("live");
+  const jitter = useJitter();
 
   // The top-bar "Evento" filter, when narrowed, wins over the local tab —
   // otherwise picking "Solo en vivo" up there would be silently ignored here.
@@ -129,13 +131,13 @@ export function EventsTable() {
                   ))}
                 </span>
 
-                {event.books.map((book) =>
+                {event.books.map((book, bookIndex) =>
                   book.odds.map((value, marketIndex) => (
                     <span
                       key={`${book.bookie}-${marketIndex}`}
                       className="text-center text-[12.5px] font-medium text-ink tabular-nums"
                     >
-                      {value.toFixed(2)}
+                      {jitter(value, index * 10 + bookIndex * 3 + marketIndex).toFixed(2)}
                     </span>
                   )),
                 )}

@@ -14,10 +14,11 @@ export default async function DashboardPage() {
   // The middleware only checks that a cookie exists — Edge has no node:crypto.
   // The signature is verified here, so a hand-written cookie gets bounced.
   const store = await cookies();
-  if (!readSessionToken(store.get(SESSION_COOKIE)?.value)) redirect("/login");
+  const user = readSessionToken(store.get(SESSION_COOKIE)?.value);
+  if (!user) redirect("/login");
 
   return (
-    <DashboardProvider>
+    <DashboardProvider user={user}>
       <div className="flex h-dvh flex-col">
         <Header />
 
