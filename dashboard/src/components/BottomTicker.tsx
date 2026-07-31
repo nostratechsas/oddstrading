@@ -1,8 +1,13 @@
+"use client";
+
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { tickerItems } from "@/lib/data";
+import { useDashboard } from "@/lib/store";
 
 export function BottomTicker() {
+  const { setSection, notify } = useDashboard();
+
   return (
     <footer className="flex h-9 shrink-0 items-stretch border-t border-line bg-rail">
       <div className="relative min-w-0 flex-1 overflow-hidden">
@@ -11,9 +16,12 @@ export function BottomTicker() {
           {[0, 1].map((copy) => (
             <div key={copy} className="flex items-center" aria-hidden={copy === 1}>
               {tickerItems.map((item) => (
-                <span
+                <button
                   key={`${copy}-${item.team}`}
-                  className="flex items-center gap-2 px-5 text-xs whitespace-nowrap"
+                  type="button"
+                  tabIndex={copy === 1 ? -1 : 0}
+                  onClick={() => notify(`${item.team} · cuota ${item.price}`)}
+                  className="flex cursor-pointer items-center gap-2 px-5 text-xs whitespace-nowrap transition-colors duration-150 hover:bg-hover"
                 >
                   <span className="text-muted">{item.team}</span>
                   <b className="font-semibold text-ink tabular-nums">{item.price}</b>
@@ -22,19 +30,20 @@ export function BottomTicker() {
                   ) : (
                     <ArrowDown className="h-3 w-3 text-down" aria-label="Baja" />
                   )}
-                </span>
+                </button>
               ))}
             </div>
           ))}
         </div>
         <span className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-linear-to-r from-transparent to-rail" />
       </div>
-      <a
-        href="#"
-        className="flex shrink-0 items-center border-l border-line px-4 text-xs font-medium text-muted transition-colors duration-150 hover:text-ink"
+      <button
+        type="button"
+        onClick={() => setSection("mercados")}
+        className="flex shrink-0 cursor-pointer items-center border-l border-line px-4 text-xs font-medium text-muted transition-colors duration-150 hover:text-ink"
       >
         Ver más
-      </a>
+      </button>
     </footer>
   );
 }

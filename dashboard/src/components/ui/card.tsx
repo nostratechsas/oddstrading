@@ -30,12 +30,16 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
   );
 }
 
-/** The green "Ver todos / Ver todas" header link. */
-export function CardLink({ className, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+/**
+ * The green "Ver todos / Ver todas" header action. A button, not an anchor —
+ * it expands a list in place rather than navigating anywhere.
+ */
+export function CardLink({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <a
+    <button
+      type="button"
       className={cn(
-        "cursor-pointer text-xs font-medium text-up transition-colors duration-150 hover:text-[#4ade80]",
+        "shrink-0 cursor-pointer text-xs font-medium text-up transition-colors duration-150 hover:text-[#4ade80]",
         className,
       )}
       {...props}

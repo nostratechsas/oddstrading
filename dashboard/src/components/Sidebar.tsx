@@ -1,9 +1,19 @@
-import { Shield, Trophy } from "lucide-react";
+"use client";
+
+import { RotateCcw, Shield, Trophy } from "lucide-react";
 
 import { SportIcon } from "@/components/icons/sports";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
-import { leagues, newsfeed, quickFilters, sports } from "@/lib/data";
+import {
+  countryOptions,
+  dayOptions,
+  leagueOptions,
+  leagues,
+  newsfeed,
+  sports,
+} from "@/lib/data";
+import { useDashboard } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -14,54 +24,93 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Sports beyond this are hidden until "Ver todos" is pressed. */
+const SPORTS_PREVIEW = 10;
+
 export function Sidebar() {
+  const {
+    sport,
+    setSport,
+    filters,
+    draft,
+    setDraft,
+    applyDraft,
+    resetFilters,
+    dirty,
+    expanded,
+    toggleExpanded,
+    notify,
+  } = useDashboard();
+
+  const showAllSports = expanded.sports ?? false;
+  const shownSports = showAllSports ? sports : sports.slice(0, SPORTS_PREVIEW);
+
   return (
     <aside className="hidden w-[220px] shrink-0 flex-col overflow-y-auto border-r border-line bg-rail py-4 lg:flex">
       <SectionLabel>Deportes</SectionLabel>
 
       <nav className="flex flex-col gap-0.5 px-2" aria-label="Deportes">
-        {sports.map((sport) => (
-          <a
-            key={sport.name}
-            href="#"
-            aria-current={sport.active ? "page" : undefined}
-            className={cn(
-              "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] transition-colors duration-150",
-              sport.active
-                ? "bg-hover font-medium text-ink"
-                : "text-muted hover:bg-hover hover:text-ink",
-            )}
-          >
-            <SportIcon name={sport.icon} tint={sport.tint} />
-            <span className="min-w-0 flex-1 truncate">{sport.name}</span>
-            <span
+        {shownSports.map((item) => {
+          const active = item.icon === sport;
+          return (
+            <button
+              key={item.icon}
+              type="button"
+              aria-pressed={active}
+              onClick={() => setSport(item.icon)}
               className={cn(
-                "text-xs font-semibold tabular-nums",
-                sport.active
-                  ? "rounded-md bg-up-soft px-1.5 py-0.5 text-up"
-                  : "text-up",
+                "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors duration-150",
+                active ? "bg-hover font-medium text-ink" : "text-muted hover:bg-hover hover:text-ink",
               )}
             >
-              {sport.count}
-            </span>
-          </a>
-        ))}
+              <SportIcon name={item.icon} tint={item.tint} />
+              <span className="min-w-0 flex-1 truncate">{item.name}</span>
+              <span
+                className={cn(
+                  "text-xs font-semibold tabular-nums",
+                  active ? "rounded-md bg-up-soft px-1.5 py-0.5 text-up" : "text-up",
+                )}
+              >
+                {item.count}
+              </span>
+            </button>
+          );
+        })}
       </nav>
 
-      <a href="#" className="mt-1.5 px-4.5 text-xs text-faint transition-colors duration-150 hover:text-muted">
-        Ver todos
-      </a>
+      {sports.length > SPORTS_PREVIEW && (
+        <button
+          type="button"
+          onClick={() => toggleExpanded("sports")}
+          className="mt-1.5 cursor-pointer px-4.5 text-left text-xs text-faint transition-colors duration-150 hover:text-muted"
+        >
+          {showAllSports ? "Ver menos" : "Ver todos"}
+        </button>
+      )}
 
       <div className="mt-6">
         <SectionLabel>Ligas</SectionLabel>
         <nav className="flex flex-col gap-0.5 px-2" aria-label="Ligas">
           {leagues.map((league) => {
             const Icon = league.kind === "cup" ? Trophy : Shield;
+            const active = filters.league === league.id;
             return (
-              <a
-                key={league.name}
-                href="#"
-                className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] text-muted transition-colors duration-150 hover:bg-hover hover:text-ink"
+              <button
+                key={league.id}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  // The sidebar commits immediately — it is a navigation
+                  // control, not part of the "Aplicar filtros" draft.
+                  setDraft({ league: league.id });
+                  applyDraft();
+                }}
+                className={cn(
+                  "flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors duration-150",
+                  active
+                    ? "bg-hover font-medium text-ink"
+                    : "text-muted hover:bg-hover hover:text-ink",
+                )}
               >
                 <Icon
                   className="h-4 w-4 shrink-0"
@@ -71,7 +120,7 @@ export function Sidebar() {
                 />
                 <span className="min-w-0 flex-1 truncate">{league.name}</span>
                 <span className="text-xs font-semibold text-up tabular-nums">{league.count}</span>
-              </a>
+              </button>
             );
           })}
         </nav>
@@ -80,12 +129,46 @@ export function Sidebar() {
       <div className="mt-6">
         <SectionLabel>Filtros rápidos</SectionLabel>
         <div className="flex flex-col gap-2 px-3">
-          {quickFilters.map((filter) => (
-            <Select key={filter} value={filter} className="w-full justify-between bg-raised text-[13px] text-muted" />
-          ))}
-          <Button fullWidth className="mt-1">
+          <Select
+            options={countryOptions}
+            value={draft.country}
+            onChange={(value) => setDraft({ country: value })}
+            ariaLabel="País"
+            className="bg-raised text-[13px] text-muted"
+          />
+          <Select
+            options={leagueOptions}
+            value={draft.league}
+            onChange={(value) => setDraft({ league: value })}
+            ariaLabel="Liga"
+            className="bg-raised text-[13px] text-muted"
+          />
+          <Select
+            options={dayOptions}
+            value={draft.day}
+            onChange={(value) => setDraft({ day: value })}
+            ariaLabel="Periodo"
+            className="bg-raised text-[13px] text-muted"
+          />
+
+          <Button fullWidth onClick={applyDraft} className="mt-1">
             Aplicar filtros
+            {dirty && (
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-white"
+                aria-label="Hay cambios sin aplicar"
+              />
+            )}
           </Button>
+
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="flex cursor-pointer items-center justify-center gap-1.5 rounded-btn py-1.5 text-xs text-faint transition-colors duration-150 hover:text-ink"
+          >
+            <RotateCcw className="h-3 w-3" aria-hidden="true" />
+            Restablecer
+          </button>
         </div>
       </div>
 
@@ -93,9 +176,11 @@ export function Sidebar() {
         <SectionLabel>Newsfeed</SectionLabel>
         <div className="flex flex-col gap-2 px-3">
           {newsfeed.map((item) => (
-            <article
+            <button
               key={item.text}
-              className="flex cursor-pointer gap-2.5 rounded-lg border border-line bg-panel p-2.5 transition-colors duration-150 hover:bg-hover"
+              type="button"
+              onClick={() => notify(item.text)}
+              className="flex w-full cursor-pointer gap-2.5 rounded-lg border border-line bg-panel p-2.5 text-left transition-colors duration-150 hover:bg-hover"
             >
               <span
                 className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
@@ -104,16 +189,16 @@ export function Sidebar() {
               >
                 {item.initials}
               </span>
-              <div className="min-w-0">
-                <p className="text-xs leading-snug text-ink">
+              <span className="min-w-0">
+                <span className="block text-xs leading-snug text-ink">
                   {item.text}
                   {item.highlight && (
                     <b className="ml-1 font-semibold text-up tabular-nums">{item.highlight}</b>
                   )}
-                </p>
-                <p className="mt-0.5 text-[11px] text-faint">{item.time}</p>
-              </div>
-            </article>
+                </span>
+                <span className="mt-0.5 block text-[11px] text-faint">{item.time}</span>
+              </span>
+            </button>
           ))}
         </div>
       </div>

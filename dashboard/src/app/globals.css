@@ -39,6 +39,36 @@ body {
   background: var(--color-bg);
   color: var(--color-ink);
   font-feature-settings: "cv11";
+  transition:
+    background-color 150ms var(--ease-out, ease),
+    color 150ms var(--ease-out, ease);
+}
+
+/* ---------------------------------------------------------------------------
+   Light mode — the header toggle stamps `.light-mode` on <html>.
+   Only the surface and ink tokens flip; the signal colours (up/down/blue/gold)
+   stay put so a rising price reads the same green in either theme.
+   --------------------------------------------------------------------------- */
+.light-mode {
+  --color-bg: #f1f5f9;
+  --color-rail: #ffffff;
+  --color-panel: #ffffff;
+  --color-raised: #f8fafc;
+  --color-hover: #e9eef5;
+
+  --color-line: rgb(15 23 42 / 0.08);
+  --color-line-strong: rgb(15 23 42 / 0.14);
+
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-faint: #64748b;
+
+  /* Mint on white fails contrast at the reference value, so the light theme
+     binds a deeper green for anything that carries text. */
+  --color-up: #15803d;
+  --color-up-soft: rgb(21 128 61 / 0.1);
+  --color-down: #dc2626;
+  --color-down-soft: rgb(220 38 38 / 0.1);
 }
 
 /* Slim, recessive scrollbars — the terminal look. */

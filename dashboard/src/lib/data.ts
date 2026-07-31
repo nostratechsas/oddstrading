@@ -29,16 +29,16 @@ const walk = (seed: number, points: number, drift: number): number[] => {
 import type { SportIconName } from "@/components/icons/sports";
 
 export interface Sport {
+  /** Doubles as the icon name and the selection key. */
   icon: SportIconName;
   /** Icon tint — each sport keeps its own hue, like the reference. */
   tint: string;
   name: string;
   count: number;
-  active?: boolean;
 }
 
 export const sports: Sport[] = [
-  { icon: "soccer", tint: "#e2e8f0", name: "Fútbol", count: 1287, active: true },
+  { icon: "soccer", tint: "#e2e8f0", name: "Fútbol", count: 1287 },
   { icon: "basketball", tint: "#f97316", name: "Baloncesto", count: 342 },
   { icon: "tennis", tint: "#a3e635", name: "Tenis", count: 198 },
   { icon: "baseball", tint: "#f87171", name: "Béisbol", count: 154 },
@@ -51,6 +51,8 @@ export const sports: Sport[] = [
 ];
 
 export interface League {
+  /** Filter key, shared with `FeaturedEvent.leagueId`. */
+  id: string;
   name: string;
   /** Badge tint. */
   tint: string;
@@ -60,12 +62,12 @@ export interface League {
 }
 
 export const leagues: League[] = [
-  { name: "LigaPro Ecuador", tint: "#facc15", count: 128, kind: "league" },
-  { name: "UEFA Champions League", tint: "#38bdf8", count: 36, kind: "cup" },
-  { name: "Premier League", tint: "#a78bfa", count: 87, kind: "league" },
-  { name: "La Liga", tint: "#f97316", count: 74, kind: "league" },
-  { name: "Serie A", tint: "#3b82f6", count: 68, kind: "league" },
-  { name: "Bundesliga", tint: "#ef4444", count: 52, kind: "league" },
+  { id: "ligapro", name: "LigaPro Ecuador", tint: "#facc15", count: 128, kind: "league" },
+  { id: "champions", name: "UEFA Champions League", tint: "#38bdf8", count: 36, kind: "cup" },
+  { id: "premier", name: "Premier League", tint: "#a78bfa", count: 87, kind: "league" },
+  { id: "laliga", name: "La Liga", tint: "#f97316", count: 74, kind: "league" },
+  { id: "seriea", name: "Serie A", tint: "#3b82f6", count: 68, kind: "league" },
+  { id: "bundesliga", name: "Bundesliga", tint: "#ef4444", count: 52, kind: "league" },
 ];
 
 export const quickFilters = ["Todos los países", "Todas las ligas", "Próximas 24h"];
@@ -291,8 +293,13 @@ export interface EventOdds {
 }
 
 export interface FeaturedEvent {
+  /** Matches `League.id`, so the league filter can select on it. */
+  leagueId: string;
   league: string;
   live?: string;
+  /** Kick-off, for the "Próximos" tab. */
+  time?: string;
+  status: "live" | "upcoming" | "finished";
   teams: [EventTeam, EventTeam];
   books: [EventOdds, EventOdds, EventOdds];
   more: number;
@@ -302,8 +309,10 @@ export const eventBookies = ["Ecuabet", "Bet365", "Betano"];
 
 export const featuredEvents: FeaturedEvent[] = [
   {
+    leagueId: "ligapro",
     league: "LigaPro Ecuador",
     live: "En vivo 63'",
+    status: "live",
     teams: [
       { name: "Barcelona SC", dot: "#eab308", score: 1 },
       { name: "Emelec", dot: "#38bdf8", score: 1 },
@@ -316,7 +325,26 @@ export const featuredEvents: FeaturedEvent[] = [
     more: 12,
   },
   {
+    leagueId: "ligapro",
+    league: "LigaPro Ecuador",
+    live: "En vivo 28'",
+    status: "live",
+    teams: [
+      { name: "Liga de Quito", dot: "#f8fafc", score: 2 },
+      { name: "Aucas", dot: "#dc2626", score: 0 },
+    ],
+    books: [
+      { bookie: "Ecuabet", odds: [1.55, 3.9, 5.6] },
+      { bookie: "Bet365", odds: [1.58, 3.8, 5.4] },
+      { bookie: "Betano", odds: [1.52, 4.0, 5.8] },
+    ],
+    more: 9,
+  },
+  {
+    leagueId: "champions",
     league: "UEFA Champions League",
+    status: "upcoming",
+    time: "14:45",
     teams: [
       { name: "Manchester City", dot: "#7dd3fc" },
       { name: "Bayern München", dot: "#ef4444" },
@@ -329,7 +357,10 @@ export const featuredEvents: FeaturedEvent[] = [
     more: 18,
   },
   {
+    leagueId: "laliga",
     league: "La Liga",
+    status: "upcoming",
+    time: "15:00",
     teams: [
       { name: "Real Madrid", dot: "#e2e8f0" },
       { name: "Betis", dot: "#22c55e" },
@@ -341,7 +372,100 @@ export const featuredEvents: FeaturedEvent[] = [
     ],
     more: 16,
   },
+  {
+    leagueId: "premier",
+    league: "Premier League",
+    status: "upcoming",
+    time: "16:30",
+    teams: [
+      { name: "Arsenal", dot: "#ef4444" },
+      { name: "Liverpool", dot: "#dc2626" },
+    ],
+    books: [
+      { bookie: "Ecuabet", odds: [2.35, 3.5, 2.95] },
+      { bookie: "Bet365", odds: [2.4, 3.45, 2.9] },
+      { bookie: "Betano", odds: [2.32, 3.55, 3.0] },
+    ],
+    more: 21,
+  },
+  {
+    leagueId: "seriea",
+    league: "Serie A",
+    status: "finished",
+    time: "FT",
+    teams: [
+      { name: "Inter", dot: "#3b82f6", score: 2 },
+      { name: "Milan", dot: "#ef4444", score: 1 },
+    ],
+    books: [
+      { bookie: "Ecuabet", odds: [1.95, 3.4, 3.9] },
+      { bookie: "Bet365", odds: [1.98, 3.35, 3.85] },
+      { bookie: "Betano", odds: [1.92, 3.45, 3.95] },
+    ],
+    more: 14,
+  },
+  {
+    leagueId: "bundesliga",
+    league: "Bundesliga",
+    status: "finished",
+    time: "FT",
+    teams: [
+      { name: "Dortmund", dot: "#facc15", score: 3 },
+      { name: "Leipzig", dot: "#f87171", score: 3 },
+    ],
+    books: [
+      { bookie: "Ecuabet", odds: [2.1, 3.6, 3.2] },
+      { bookie: "Bet365", odds: [2.12, 3.55, 3.15] },
+      { bookie: "Betano", odds: [2.08, 3.65, 3.25] },
+    ],
+    more: 11,
+  },
 ];
+
+/* --------------------------------------------------- filter option catalogues */
+
+export const countryOptions = [
+  { value: "ec", label: "Ecuador" },
+  { value: "pe", label: "Perú" },
+  { value: "co", label: "Colombia" },
+  { value: "all", label: "Todos los países" },
+] as const;
+
+export const leagueOptions = [
+  { value: "all", label: "Todas las ligas" },
+  { value: "ligapro", label: "LigaPro Ecuador" },
+  { value: "champions", label: "UEFA Champions League" },
+  { value: "premier", label: "Premier League" },
+  { value: "laliga", label: "La Liga" },
+  { value: "seriea", label: "Serie A" },
+  { value: "bundesliga", label: "Bundesliga" },
+] as const;
+
+export const eventOptions = [
+  { value: "all", label: "Todos" },
+  { value: "live", label: "Solo en vivo" },
+  { value: "upcoming", label: "Próximos" },
+  { value: "finished", label: "Finalizados" },
+] as const;
+
+export const dayOptions = [
+  { value: "today", label: "Hoy, 22 May" },
+  { value: "tomorrow", label: "Mañana, 23 May" },
+  { value: "week", label: "Esta semana" },
+  { value: "next24", label: "Próximas 24h" },
+] as const;
+
+export const comparisonOptions = [
+  { value: "margin", label: "Comparación: Margen" },
+  { value: "bookie", label: "Comparación: Casa" },
+  { value: "rank", label: "Comparación: Ranking" },
+] as const;
+
+export const rangeOptions = [
+  { value: "6h", label: "Últimas 6 horas" },
+  { value: "12h", label: "Últimas 12 horas" },
+  { value: "24h", label: "Últimas 24 horas" },
+] as const;
 
 /* -------------------------------------------------------- movement series */
 

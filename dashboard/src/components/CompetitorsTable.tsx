@@ -4,16 +4,23 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
+  type SortingState,
 } from "@tanstack/react-table";
+import { ArrowDown, ArrowDownUp, ArrowUp } from "lucide-react";
 
 import { BookieLogo } from "@/components/BookieLogo";
 import { OddsCell } from "@/components/OddsCell";
 import { Sparkline } from "@/components/Sparkline";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
-import { competitors, type Competitor } from "@/lib/data";
+import { comparisonOptions, type Competitor } from "@/lib/data";
+import { useDashboard, type SortKey } from "@/lib/store";
 import { cn } from "@/lib/utils";
+
+/** Rows shown before "Ver todas" expands the list. */
+const PREVIEW = 10;
 
 const columnHelper = createColumnHelper<Competitor>();
 
@@ -44,6 +51,9 @@ const columns = [
   columnHelper.accessor("margin", {
     id: "margin",
     header: "Margen total",
+    // Sorts on the number, not the "4.21%" string — otherwise 10% would sort
+    // before 5%.
+    sortingFn: (a, b) => parseFloat(a.original.margin) - parseFloat(b.original.margin),
     cell: (info) => <span className="text-sm text-ink tabular-nums">{info.getValue()}</span>,
   }),
   columnHelper.group({
@@ -90,17 +100,40 @@ function Legend() {
 }
 
 export function CompetitorsTable() {
+  const { visibleCompetitors, sort, toggleSort, expanded, toggleExpanded, notify, search } =
+    useDashboard();
+
+  // The store owns the sort so the header and the comparison select cannot
+  // disagree; TanStack consumes it as controlled state.
+  const sorting: SortingState = [{ id: sort.key, desc: sort.dir === "desc" }];
+
   const table = useReactTable({
-    data: competitors,
+    data: visibleCompetitors,
     columns,
+    state: { sorting },
+    onSortingChange: () => {
+      /* Sorting is driven through the store's toggleSort. */
+    },
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
+
+  const allRows = table.getRowModel().rows;
+  const showAll = expanded.competitors ?? false;
+  const rows = showAll ? allRows : allRows.slice(0, PREVIEW);
 
   return (
     <Card className="flex h-full flex-col">
       <CardHeader>
         <CardTitle>Top 10 competidores por Ecuador</CardTitle>
-        <Select value="Comparación: Margen" className="py-1.5 text-xs" />
+        <Select
+          options={comparisonOptions}
+          value={sort.key}
+          onChange={(value) => toggleSort(value as SortKey)}
+          ariaLabel="Criterio de comparación"
+          align="end"
+          className="w-auto min-w-[12rem] py-1.5 text-xs"
+        />
       </CardHeader>
 
       <div className="min-h-0 flex-1 overflow-x-auto px-3">
@@ -108,28 +141,58 @@ export function CompetitorsTable() {
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className={cn(
-                      "px-2 pb-2 text-left text-[11px] font-medium text-faint",
-                      header.column.id.startsWith("odds") && "text-center",
-                      header.column.parent?.id === "market" && "pb-2",
-                      header.column.id === "market" && "pt-1 pb-0.5 text-center",
-                    )}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const key = header.column.id as SortKey;
+                  const sortable = ["rank", "bookie", "margin"].includes(key);
+                  const active = sortable && sort.key === key;
+                  const Icon = !active ? ArrowDownUp : sort.dir === "asc" ? ArrowUp : ArrowDown;
+
+                  return (
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className={cn(
+                        "px-2 pb-2 text-left text-[11px] font-medium text-faint",
+                        header.column.id.startsWith("odds") && "text-center",
+                        header.column.id === "market" && "pt-1 pb-0.5 text-center",
+                      )}
+                    >
+                      {header.isPlaceholder ? null : sortable ? (
+                        <button
+                          type="button"
+                          onClick={() => toggleSort(key)}
+                          className={cn(
+                            "group inline-flex cursor-pointer items-center gap-1 text-left transition-colors duration-150 hover:text-ink",
+                            active && "text-ink",
+                          )}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <Icon
+                            className={cn(
+                              "h-3 w-3 shrink-0 transition-opacity duration-150",
+                              active ? "text-up opacity-100" : "opacity-0 group-hover:opacity-60",
+                            )}
+                            aria-hidden="true"
+                          />
+                        </button>
+                      ) : (
+                        flexRender(header.column.columnDef.header, header.getContext())
+                      )}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="group transition-colors duration-150 hover:bg-hover">
+            {rows.map((row) => (
+              <tr
+                key={row.id}
+                onClick={() =>
+                  notify(`${row.original.bookie} · margen ${row.original.margin}`)
+                }
+                className="group cursor-pointer transition-colors duration-150 hover:bg-hover"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
@@ -143,12 +206,31 @@ export function CompetitorsTable() {
                 ))}
               </tr>
             ))}
+
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={7} className="py-10 text-center text-sm text-faint">
+                  Ninguna casa coincide con «{search}».
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3">
-        <p className="text-xs text-faint">Mostrando 10 de 15 casas de apuestas</p>
+        <p className="text-xs text-faint">
+          Mostrando {rows.length} de {visibleCompetitors.length} casas
+          {visibleCompetitors.length > PREVIEW && (
+            <button
+              type="button"
+              onClick={() => toggleExpanded("competitors")}
+              className="ml-2 cursor-pointer font-medium text-up transition-colors duration-150 hover:text-[#4ade80]"
+            >
+              {showAll ? "Ver menos" : "Ver todas"}
+            </button>
+          )}
+        </p>
         <Legend />
       </div>
     </Card>
