@@ -12,7 +12,7 @@ import { useState } from "react";
 
 import { Bezel } from "@/components/ui/bezel";
 import type { SiteContent } from "@/data/content/es";
-import type { CountryOption, Plan } from "@/data/content/shapes";
+import type { Billing, CountryOption, Plan } from "@/data/content/shapes";
 import { ApiClientError, apiFetch } from "@/lib/api-client";
 import { formatUsd } from "@/utils/format/currency";
 
@@ -26,6 +26,8 @@ export interface CheckoutFlowProps {
   plans: readonly Plan[];
   countries: readonly CountryOption[];
   initialPlan: string;
+  /** Suffix per billing cadence, shared with the pricing section. */
+  billingLabels: Record<Billing, string>;
 }
 
 interface CheckoutResult {
@@ -74,7 +76,13 @@ const Step = ({
   </section>
 );
 
-export const CheckoutFlow = ({ content, plans, countries, initialPlan }: CheckoutFlowProps) => {
+export const CheckoutFlow = ({
+  content,
+  plans,
+  countries,
+  initialPlan,
+  billingLabels,
+}: CheckoutFlowProps) => {
   const [planSlug, setPlanSlug] = useState(initialPlan);
   const [billing, setBilling] = useState<BillingData>(EMPTY_BILLING);
   const [method, setMethod] = useState(content.payment.methods[0].id);
@@ -131,7 +139,7 @@ export const CheckoutFlow = ({ content, plans, countries, initialPlan }: Checkou
         </p>
         <p className="text-sm text-foreground-subtle">
           {content.done.copySuffix} {billing.email}. {plan.name} · USD {formatUsd(plan.price)}{" "}
-          {content.done.planSuffix}.
+          {billingLabels[plan.billing]}.
         </p>
       </Bezel>
     );
@@ -150,7 +158,7 @@ export const CheckoutFlow = ({ content, plans, countries, initialPlan }: Checkou
             value={planSlug}
             onChange={setPlanSlug}
             legend={content.planLegend}
-            perMonth={content.perMonthShort}
+            billingLabels={billingLabels}
             featuredBadge={content.summary.plan}
           />
         </Step>

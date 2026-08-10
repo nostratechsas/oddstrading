@@ -20,7 +20,10 @@ export interface CheckoutViewProps {
 }
 
 export const CheckoutView = ({ content, plan }: CheckoutViewProps) => {
-  const plans = content.pricing.plans;
+  // The free demo has nothing to bill, so it never reaches this flow: its card
+  // links to the contact form instead. A stale `?plan=demo` therefore falls
+  // back to the featured tier rather than rendering a USD 0 order.
+  const plans = content.pricing.plans.filter((item) => item.billing !== "free");
   const selected =
     plans.find((item) => item.slug === plan) ?? plans.find((item) => item.featured) ?? plans[0];
 
@@ -57,6 +60,7 @@ export const CheckoutView = ({ content, plan }: CheckoutViewProps) => {
             plans={plans}
             countries={countries}
             initialPlan={selected.slug}
+            billingLabels={content.pricing.billingLabels}
           />
 
           <p className="mt-12 text-sm text-foreground-subtle">

@@ -64,12 +64,19 @@ export const PricingSection = ({ content, base, email }: PricingSectionProps) =>
                 {plan.audience}
               </p>
 
+              {/* The tiers are not billed the same way — free trial, one-off
+                  setup fee, monthly licence — so the suffix comes from the
+                  plan, never from a single hard-coded "/mes". */}
               <p className="mt-2 flex items-baseline gap-1.5">
-                <span className="text-xs text-foreground-subtle">USD</span>
+                {plan.price > 0 && (
+                  <span className="text-xs text-foreground-subtle">USD</span>
+                )}
                 <b className="text-5xl font-light tracking-tight tabular-nums">
-                  {formatUsd(plan.price)}
+                  {plan.price > 0 ? formatUsd(plan.price) : content.freeLabel}
                 </b>
-                <span className="text-sm text-foreground-subtle">{content.perMonth}</span>
+                <span className="text-sm text-foreground-subtle">
+                  {content.billingLabels[plan.billing]}
+                </span>
               </p>
 
               {plan.valueNote && (
@@ -102,8 +109,14 @@ export const PricingSection = ({ content, base, email }: PricingSectionProps) =>
 
               <TickList items={plan.features} className="mb-6" />
 
+              {/* A free trial has nothing to charge, so it goes to the contact
+                  form rather than through a billing flow. */}
               <ActionLink
-                href={`${base}/checkout?plan=${plan.slug}`}
+                href={
+                  plan.billing === "free"
+                    ? `${base}/#contact`
+                    : `${base}/checkout?plan=${plan.slug}`
+                }
                 tone={plan.featured ? "primary" : "ghost"}
                 icon={plan.featured ? "arrow" : "chevron"}
                 fullWidth

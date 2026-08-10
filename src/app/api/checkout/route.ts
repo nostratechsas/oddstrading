@@ -59,10 +59,22 @@ export const POST = handle(async (req) => {
   if (!plan) {
     throw new ApiError(400, "unknown_plan", "El plan solicitado no existe.");
   }
+  // The free demo is not sold: it is requested through the contact form. A
+  // crafted payload must not be able to open a USD 0 order here.
+  if (plan.billing === "free") {
+    throw new ApiError(400, "not_billable", "El plan demo no se contrata por este flujo.");
+  }
 
   const payload = {
     reference: buildReference(plan.slug),
-    plan: { slug: plan.slug, name: plan.name, amount: plan.price, currency: "USD", interval: "month" },
+    plan: {
+      slug: plan.slug,
+      name: plan.name,
+      amount: plan.price,
+      currency: "USD",
+      // A one-off setup fee must not reach the provider as a subscription.
+      interval: plan.billing === "monthly" ? "month" : "one_time",
+    },
     paymentMethod: order.paymentMethod,
     billing: order.billing,
   };

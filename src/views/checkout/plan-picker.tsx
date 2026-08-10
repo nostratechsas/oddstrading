@@ -5,7 +5,7 @@
  */
 "use client";
 
-import type { Plan } from "@/data/content/shapes";
+import type { Billing, Plan } from "@/data/content/shapes";
 import { formatUsd } from "@/utils/format/currency";
 
 export interface PlanPickerProps {
@@ -13,7 +13,8 @@ export interface PlanPickerProps {
   value: string;
   onChange: (slug: string) => void;
   legend: string;
-  perMonth: string;
+  /** Suffix per billing cadence — a one-off fee must not read "/mes". */
+  billingLabels: Record<Billing, string>;
   featuredBadge: string;
 }
 
@@ -22,7 +23,7 @@ export const PlanPicker = ({
   value,
   onChange,
   legend,
-  perMonth,
+  billingLabels,
 }: PlanPickerProps) => (
   <fieldset className="flex flex-col gap-3">
     <legend className="sr-only">{legend}</legend>
@@ -64,7 +65,9 @@ export const PlanPicker = ({
             <b className="block text-2xl font-light tracking-tight tabular-nums">
               {formatUsd(plan.price)}
             </b>
-            <span className="text-xs text-foreground-subtle">{perMonth}</span>
+            <span className="text-xs text-foreground-subtle">
+              USD {billingLabels[plan.billing]}
+            </span>
           </span>
         </label>
       );

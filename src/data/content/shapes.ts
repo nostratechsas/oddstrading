@@ -36,12 +36,20 @@ export interface CodeSample {
   code: string;
 }
 
+/**
+ * How a tier is billed. The demo is free, the integration is a one-off
+ * setup fee and Pro is a monthly licence — so the price can never carry a
+ * single hard-coded "/mes" suffix.
+ */
+export type Billing = "free" | "once" | "monthly";
+
 export interface Plan {
   slug: string;
   name: string;
   audience: string;
-  /** Monthly licence fee in USD, tax excluded. */
+  /** Fee in USD, tax excluded. `0` for the free demo. */
   price: number;
+  billing: Billing;
   scope: string;
   features: readonly string[];
   cta: string;
