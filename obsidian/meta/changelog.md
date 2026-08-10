@@ -8,6 +8,26 @@ updated: 2026-07-29
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-08-09 (sign-in works from a local checkout)
+
+The sign-in link was hard-coded to `https://app.oddstradingview.com`, so it was
+unclickable from a local checkout and pointed at a host that does not resolve yet.
+
+- **`NEXT_PUBLIC_APP_URL`** now carries the dashboard origin, exported as
+  `appUrl` from [[site]]. Unset, it resolves to `http://localhost:3001` in
+  development and to the production subdomain otherwise — so a fresh clone gets
+  a working link with no configuration.
+- **The dashboard's dev and start scripts pin port 3001.** Both apps default to
+  3000, so running them together used to be a port clash.
+- `brand.app` is gone: an environment-dependent origin does not belong in the
+  brand constants, which are static content.
+- `dashboard/.env.example` documents the auth trio; `.env.local` is gitignored.
+
+> [!tip] Running both locally
+> `yarn dev` at the root serves the landing on 3000, `npm run dev` inside
+> `dashboard/` serves the dashboard on 3001, and "Iniciar sesión" walks from one
+> to the other. Verified end to end: link → login → credentials → dashboard.
+
 ## 2026-08-09 (sign-in reaches the dashboard)
 
 - **"Iniciar sesión" now goes to the dashboard.** It pointed at `/#contacto` — an

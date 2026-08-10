@@ -10,6 +10,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
 import type { SiteContent } from "@/data/content/es";
 import { brand, countries } from "@/data/content/shapes";
+import { appUrl } from "@/lib/site";
 
 import { CheckoutFlow } from "./checkout-flow";
 
@@ -36,7 +37,7 @@ export const CheckoutView = ({ content, plan }: CheckoutViewProps) => {
         logoAlt={brand.logoAlt}
         labels={content.nav}
         ctaHref={`${content.base}/checkout`}
-        signInHref={brand.app}
+        signInHref={`${appUrl}/login`}
       />
 
       <LocaleNotice

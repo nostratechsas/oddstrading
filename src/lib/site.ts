@@ -6,6 +6,20 @@
  */
 import { publicEnv } from "@/env";
 
+/**
+ * Origin of the dashboard — a separate Next app on its own subdomain.
+ *
+ * The fallback is environment-aware on purpose: with nothing configured, a
+ * local checkout links to the dashboard's dev server (`yarn dev` there listens
+ * on 3001), so "Iniciar sesión" is clickable without anyone setting a variable.
+ * Production overrides it with `NEXT_PUBLIC_APP_URL`.
+ */
+export const appUrl =
+  publicEnv.NEXT_PUBLIC_APP_URL ??
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:3001"
+    : "https://app.oddstradingview.com");
+
 export const siteConfig = {
   name: "OddsTrading",
   description:

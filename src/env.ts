@@ -25,6 +25,12 @@ const optionalUrl = () =>
 
 const publicSchema = z.object({
   NEXT_PUBLIC_SITE_URL: optionalUrl(),
+  /**
+   * Origin of the dashboard, which is a separate app. Left unset it falls back
+   * to `http://localhost:3001` in development and to the production subdomain
+   * otherwise — so "Iniciar sesión" works locally with no configuration.
+   */
+  NEXT_PUBLIC_APP_URL: optionalUrl(),
 });
 
 const serverSchema = z.object({
@@ -41,6 +47,7 @@ const serverSchema = z.object({
 /** Public env — safe to read anywhere (server or client). */
 export const publicEnv = publicSchema.parse({
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
 });
 
 let cachedServerEnv: z.infer<typeof serverSchema> | undefined;

@@ -10,6 +10,8 @@ import type { SiteContent } from "@/data/content/es";
 import { brand } from "@/data/content/shapes";
 import { getBookmakerLogo } from "@/utils/assets/bookmaker-logos";
 
+import { appUrl } from "@/lib/site";
+
 import { BookmakerMarquee } from "./bookmaker-marquee";
 import { ShowcaseSection } from "./showcase-section";
 import { CoverageSection } from "./coverage-section";
@@ -46,7 +48,7 @@ export const HomeView = ({ content }: HomeViewProps) => {
         logoAlt={brand.logoAlt}
         labels={content.nav}
         ctaHref={`${content.base}/checkout`}
-        signInHref={brand.app}
+        signInHref={`${appUrl}/login`}
       />
 
       <LocaleNotice {...content.notice} />

@@ -65,6 +65,9 @@ if [[ ! -f "$ROOT/.env.production" ]]; then
   cat > "$ROOT/.env.production" <<'ENV'
 NEXT_PUBLIC_SITE_URL=https://oddstradingview.com
 
+# Where "Iniciar sesión" points. Without it the link falls back to localhost.
+NEXT_PUBLIC_APP_URL=https://app.oddstradingview.com
+
 # Leads are only written to the PM2 log until this points at a real upstream.
 CONTACT_ENDPOINT=
 
