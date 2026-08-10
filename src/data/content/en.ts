@@ -263,6 +263,7 @@ export const en: SiteContent = {
         cta: "Start the demo",
         coverage: { label: "13 bookmakers integrated", capped: true },
         features: [
+          "Dashboard credentials when you activate it",
           "REST API and WebSocket with unified schema",
           "Full competitor ranking",
           "Markets and movement analysis in preview",

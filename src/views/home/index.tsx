@@ -46,6 +46,7 @@ export const HomeView = ({ content }: HomeViewProps) => {
         logoAlt={brand.logoAlt}
         labels={content.nav}
         ctaHref={`${content.base}/checkout`}
+        signInHref={brand.app}
       />
 
       <LocaleNotice {...content.notice} />

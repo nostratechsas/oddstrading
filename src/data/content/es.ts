@@ -273,6 +273,7 @@ export const es = {
         cta: "Empezar el demo",
         coverage: { label: "13 casas de apuestas integradas", capped: true },
         features: [
+          "Credenciales del panel al activarlo",
           "API REST y WebSocket con esquema unificado",
           "Ranking de competidores completo",
           "Mercados y análisis de movimientos en vista previa",

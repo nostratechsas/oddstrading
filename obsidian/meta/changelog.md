@@ -8,6 +8,22 @@ updated: 2026-07-29
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-08-09 (sign-in reaches the dashboard)
+
+- **"Iniciar sesión" now goes to the dashboard.** It pointed at `/#contacto` — an
+  anchor that does not exist, since the section id is `contact`. It was a dead
+  link in every header on the site. It now resolves to `brand.app`
+  (`app.oddstradingview.com`), as a plain anchor: the dashboard is a separate app
+  on its own subdomain, so there is no client route for the router to push.
+- **The mobile menu gained the same link**, which it never had.
+- **The sign-in screen states where an account comes from.** Without it the page
+  reads like an open sign-up and a visitor with no credentials has no next step.
+  It now says access is handed over when the 7-day demo is activated, that there
+  is no open registration, and offers a prefilled `mailto:` to
+  `contact@oddstradingview.com`.
+- The Demo tier lists "Credenciales del panel al activarlo" so the same promise
+  is visible before anyone reaches the login.
+
 ## 2026-08-09 (showcase band)
 
 A full-width dark bento between the stats and the platform section, adapted from

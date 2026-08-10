@@ -36,6 +36,7 @@ export const CheckoutView = ({ content, plan }: CheckoutViewProps) => {
         logoAlt={brand.logoAlt}
         labels={content.nav}
         ctaHref={`${content.base}/checkout`}
+        signInHref={brand.app}
       />
 
       <LocaleNotice

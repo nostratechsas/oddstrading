@@ -3,9 +3,12 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Eye, EyeOff, Loader2, LockKeyhole } from "lucide-react";
+import { Eye, EyeOff, Loader2, LockKeyhole, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+const CONTACT_EMAIL = "contact@oddstradingview.com";
+const SITE = "https://oddstradingview.com";
 
 export function LoginForm() {
   const router = useRouter();
@@ -76,7 +79,7 @@ export function LoginForm() {
       >
         <h1 className="text-base font-semibold">Acceder al panel</h1>
         <p className="mt-1 mb-5 text-xs text-muted">
-          Introduce tus credenciales para ver las cuotas en vivo.
+          Introduce las credenciales que te entregamos al activar tu demo.
         </p>
 
         <label className="block">
@@ -140,10 +143,33 @@ export function LoginForm() {
             </>
           )}
         </Button>
+        {/* States plainly where an account comes from. Without this the screen
+            reads like a public sign-up, and a visitor with no credentials has
+            no idea what to do next. */}
+        <div className="mt-5 border-t border-line pt-4">
+          <p className="text-xs leading-relaxed text-muted">
+            <b className="font-semibold text-ink">¿No tienes cuenta?</b> El acceso al
+            panel se entrega al contratar el <b className="font-semibold text-ink">demo
+            de 7 días</b>. No hay registro abierto.
+          </p>
+          <a
+            href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Solicitud de demo — OddsTrading")}`}
+            className="mt-3 flex items-center justify-center gap-2 rounded-btn border border-line-strong px-4 py-2 text-xs font-medium text-ink transition-colors duration-150 hover:bg-hover"
+          >
+            <Mail className="h-3.5 w-3.5 text-up" aria-hidden="true" />
+            {CONTACT_EMAIL}
+          </a>
+        </div>
       </form>
 
       <p className="mt-4 text-center text-[11px] text-faint">
-        Acceso restringido · OddsTrading Ecuador
+        Acceso restringido ·{" "}
+        <a
+          href={SITE}
+          className="underline decoration-line-strong underline-offset-2 transition-colors duration-150 hover:text-muted"
+        >
+          oddstradingview.com
+        </a>
       </p>
     </div>
   );

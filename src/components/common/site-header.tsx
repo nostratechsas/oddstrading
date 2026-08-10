@@ -23,6 +23,8 @@ export interface SiteHeaderProps {
   labels: { signIn: string; cta: string; theme: string; menuOpen: string; menuClose: string };
   /** Route the CTA points at, so the Spanish tree keeps its prefix. */
   ctaHref: string;
+  /** The dashboard's sign-in screen — a different app, on its own subdomain. */
+  signInHref: string;
 }
 
 export const SiteHeader = ({
@@ -32,6 +34,7 @@ export const SiteHeader = ({
   logoAlt,
   labels,
   ctaHref,
+  signInHref,
 }: SiteHeaderProps) => {
   const [open, setOpen] = useState(false);
 
@@ -91,12 +94,14 @@ export const SiteHeader = ({
 
           <div className="hidden items-center gap-4 lg:flex">
             <ThemeToggle label={labels.theme} />
-            <Link
-              href={`${ctaHref.replace("/checkout", "")}/#contacto`}
+            {/* The dashboard is a separate app on its own subdomain, so this is
+                a plain anchor: there is no client route for the router to push. */}
+            <a
+              href={signInHref}
               className="text-sm text-foreground-muted transition-colors duration-[var(--duration-fast)] ease-entrance hover:text-foreground"
             >
               {labels.signIn}
-            </Link>
+            </a>
             <ActionLink href={ctaHref}>{labels.cta}</ActionLink>
           </div>
 
@@ -127,10 +132,13 @@ export const SiteHeader = ({
             const link = links[index];
             if (!link) {
               return (
-                <animated.div key="cta" style={style} className="mt-8">
+                <animated.div key="cta" style={style} className="mt-8 flex flex-col items-start gap-5">
                   <ActionLink href={ctaHref} size="lg" onClick={() => setOpen(false)}>
                     {labels.cta}
                   </ActionLink>
+                  <a href={signInHref} className="text-sm text-foreground-muted">
+                    {labels.signIn}
+                  </a>
                 </animated.div>
               );
             }

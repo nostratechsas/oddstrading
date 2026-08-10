@@ -108,4 +108,9 @@ export const brand = {
   wordmark: "/assets/brand/oddstrading-wordmark.png",
   logoAlt: "OddsTrading",
   email: "contact@oddstradingview.com",
+  /**
+   * The dashboard, on its own subdomain. A separate app, so links to it are
+   * plain anchors rather than `next/link` — there is no client route to push.
+   */
+  app: "https://app.oddstradingview.com",
 } as const;
