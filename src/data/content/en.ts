@@ -225,9 +225,9 @@ export const en: SiteContent = {
       {
         slug: "demo", name: "Demo", price: 0, billing: "free",
         audience: "To prove the fit with your product.",
-        scope: "13 operations · Ecuador and Peru",
+        scope: "13 bookmakers integrated",
         cta: "Start the demo",
-        coverage: { label: "13 operations: 9 from Ecuador and 4 from Peru", capped: true },
+        coverage: { label: "13 bookmakers integrated", capped: true },
         features: [
           "REST API and WebSocket with unified schema",
           "Full competitor ranking",
@@ -238,13 +238,13 @@ export const en: SiteContent = {
       },
       {
         slug: "integracion", name: "Integration", price: 3000, billing: "once",
-        audience: "To go to production with regional coverage.",
+        audience: "To go to production with wider coverage.",
         scope: "Up to 20 bookmakers integrated",
         cta: "Choose Integration",
         coverage: { label: "Up to 20 bookmakers integrated", capped: true },
         features: [
           "Everything in the demo, with no day limit",
-          "Regional coverage, not just Ecuador and Peru",
+          "Seven more bookmakers than the demo",
           "Pre-match and in-play odds",
           "Local and international competitions",
           "Email support",

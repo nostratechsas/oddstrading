@@ -235,9 +235,9 @@ export const es = {
       {
         slug: "demo", name: "Demo", price: 0, billing: "free",
         audience: "Para validar el encaje con tu producto.",
-        scope: "13 operaciones · Ecuador y Perú",
+        scope: "13 casas de apuestas integradas",
         cta: "Empezar el demo",
-        coverage: { label: "13 operaciones: 9 de Ecuador y 4 de Perú", capped: true },
+        coverage: { label: "13 casas de apuestas integradas", capped: true },
         features: [
           "API REST y WebSocket con esquema unificado",
           "Ranking de competidores completo",
@@ -248,13 +248,13 @@ export const es = {
       },
       {
         slug: "integracion", name: "Integración", price: 3000, billing: "once",
-        audience: "Para salir a producción con cobertura regional.",
+        audience: "Para salir a producción con cobertura ampliada.",
         scope: "Hasta 20 casas integradas",
         cta: "Elegir Integración",
         coverage: { label: "Hasta 20 casas de apuestas integradas", capped: true },
         features: [
           "Todo lo del demo, sin límite de días",
-          "Cobertura regional, no solo Ecuador y Perú",
+          "Siete casas más que el demo",
           "Cuotas pre-match y en vivo",
           "Ligas locales e internacionales",
           "Soporte por correo",
