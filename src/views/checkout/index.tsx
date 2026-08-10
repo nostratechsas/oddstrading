@@ -10,9 +10,11 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { Shell } from "@/components/ui/shell";
 import type { SiteContent } from "@/data/content/es";
 import { brand, countries } from "@/data/content/shapes";
+import { getSpreadPercent, getTrm } from "@/lib/fx";
 import { appUrl } from "@/lib/site";
 
 import { CheckoutFlow } from "./checkout-flow";
+import type { FxQuote } from "./order-summary";
 
 export interface CheckoutViewProps {
   content: SiteContent;
@@ -20,7 +22,23 @@ export interface CheckoutViewProps {
   plan?: string;
 }
 
-export const CheckoutView = ({ content, plan }: CheckoutViewProps) => {
+export const CheckoutView = async ({ content, plan }: CheckoutViewProps) => {
+  // Fetched here so the summary can quote pesos on first paint. A failure is
+  // not fatal: the page still renders and says the rate is unavailable, which
+  // beats a blank screen or an invented number.
+  let fx: FxQuote | null = null;
+  try {
+    const trm = await getTrm();
+    fx = {
+      rate: trm.rate,
+      from: trm.from,
+      to: trm.to,
+      spreadPercent: getSpreadPercent(),
+    };
+  } catch (error) {
+    console.error("[checkout] TRM no disponible:", error);
+  }
+
   // The free demo has nothing to bill, so it never reaches this flow: its card
   // links to the contact form instead. A stale `?plan=demo` therefore falls
   // back to the featured tier rather than rendering a USD 0 order.
@@ -63,6 +81,7 @@ export const CheckoutView = ({ content, plan }: CheckoutViewProps) => {
             countries={countries}
             initialPlan={selected.slug}
             billingLabels={content.pricing.billingLabels}
+            fx={fx}
           />
 
           <p className="mt-12 text-sm text-foreground-subtle">

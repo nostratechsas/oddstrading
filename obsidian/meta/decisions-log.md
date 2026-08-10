@@ -10,6 +10,53 @@ consequences. Use [[templates/adr-note]] for new entries. Newest first.
 
 ---
 
+## ADR-0024 — The checkout charges through Wompi, in pesos, at the TRM
+
+- **Status:** Accepted
+- **Date:** 2026-08-09
+
+**Context.** The checkout collected billing data and answered "Solicitud
+registrada" with a reference. Nothing was ever charged. Prices are published in
+USD, but the money has to land in COP in a Colombian account.
+
+**Decision.** `/api/checkout` prices the order and returns a signed Wompi Web
+Checkout link; the browser goes straight there. Wompi is Bancolombia's gateway —
+it charges COP and settles to a Colombian bank account, which is the constraint
+that ruled out Stripe (not an acquirer in Colombia).
+
+- The USD list price is converted at the **TRM**, the rate certified daily by the
+  Superintendencia Financiera, read from its open-data feed and cached until the
+  published window closes.
+- **IVA 19%** is added on top; the plan prices are quoted net.
+- The peso amount for the recurring tier is **locked at signup and never
+  recalculated**. A monthly charge that silently changes size is both a support
+  problem and, if unannounced, a consumer one.
+- Card data never reaches this app. Capture belongs to Wompi's hosted page,
+  which keeps us out of PCI-DSS scope.
+
+**Consequences.**
+- Everything that decides an amount happens server-side: the plan from the
+  catalogue, the rate from the TRM, the tax from a constant, and the integrity
+  signature from the merchant secret. A crafted payload cannot set its own total.
+- **The webhook is the only proof of payment.** The redirect back is a browser
+  navigation anyone can type; `/checkout/resultado` therefore says the payment is
+  *being confirmed*, never that it succeeded.
+- If the TRM cannot be reached the checkout **fails with 503** rather than
+  quoting a guessed rate. An amount nobody can justify afterwards is worse than a
+  retry.
+- `FX_SPREAD_PERCENT` defaults to `0` — the TRM exactly, as instructed. Note the
+  exposure this accepts: the TRM went 3.204,51 → 3.157,43 between 5 and 7 Aug
+  2026, **1,5% in two days**, and at TRM-flat that movement comes out of margin.
+  Raising the variable is a config change, not a deploy.
+- The lifetime peso lock compounds that: a customer who signs at today's rate
+  keeps it while the peso moves for the rest of the contract.
+
+## Related
+
+[[api-architecture]] · [[decisions-log#ADR-0020 — Checkout collects billing data only; the provider owns the card|ADR-0020]]
+
+---
+
 ## ADR-0023 — The showcase band is always dark, in both themes
 
 - **Status:** Accepted

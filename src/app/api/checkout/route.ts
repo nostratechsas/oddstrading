@@ -1,21 +1,25 @@
 import { z } from "zod";
 
-import { getServerEnv } from "@/env";
+import { getServerEnv, publicEnv } from "@/env";
 import { en } from "@/data/content/en";
 import { ApiError, handle } from "@/lib/api";
+import { priceInCop } from "@/lib/pricing";
+import { buildCheckoutLink, buildReference, getWompiConfig } from "@/lib/wompi";
 
 /**
  * Order intake for the checkout flow.
  *
- * The handler is deliberately provider-agnostic: it validates the order, prices
- * it **server-side** from the plan catalogue in `data/content` (never from the
- * client payload),
- * and forwards it to whatever `CHECKOUT_ENDPOINT` points at — a payment
- * provider's session API, a CRM, or a billing webhook. Swap that upstream to go
- * live without touching the UI.
+ * This route **prices the order and hands back a payment link**. It does not
+ * register a request for someone to follow up on: the buyer lands on Wompi's
+ * hosted page and pays there.
  *
- * It never receives card data. Card capture belongs to the provider's hosted
- * page, which is what keeps this app out of PCI-DSS scope.
+ * Everything that decides the amount happens here, never in the browser: the
+ * plan comes from the catalogue, the peso figure from the day's TRM, the tax
+ * from a constant, and the integrity signature is computed server-side. A
+ * crafted payload cannot set its own total.
+ *
+ * Card data never touches this app. Capture belongs to Wompi's hosted page,
+ * which is what keeps this out of PCI-DSS scope.
  */
 
 const billingSchema = z.object({
@@ -37,24 +41,12 @@ const orderSchema = z.object({
   billing: billingSchema,
 });
 
-/** Human-readable reference the buyer can quote in an email. */
-const buildReference = (planSlug: string) =>
-  `OT-${planSlug.slice(0, 3).toUpperCase()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-
-const NEXT_STEP: Record<z.infer<typeof orderSchema>["paymentMethod"], string> = {
-  card: "Te enviamos por correo el enlace seguro para registrar la tarjeta y activar el cobro recurrente.",
-  transfer:
-    "Te enviamos la factura proforma con los datos bancarios en menos de 24 horas hábiles.",
-  local: "Te enviamos por correo el enlace del proveedor local para completar el pago en tu moneda.",
-};
-
 export const POST = handle(async (req) => {
   const order = orderSchema.parse(await req.json());
 
-  // Price from the catalogue, never from the request — otherwise a crafted
-  // payload could set its own amount.
-  // The catalogue is locale-independent (same slugs, same prices), so either
-  // dictionary is authoritative for pricing.
+  // Price from the catalogue, never from the request. The catalogue is
+  // locale-independent (same slugs, same prices), so either dictionary is
+  // authoritative.
   const plan = en.pricing.plans.find((item) => item.slug === order.plan);
   if (!plan) {
     throw new ApiError(400, "unknown_plan", "El plan solicitado no existe.");
@@ -65,35 +57,97 @@ export const POST = handle(async (req) => {
     throw new ApiError(400, "not_billable", "El plan demo no se contrata por este flujo.");
   }
 
+  let price;
+  try {
+    price = await priceInCop(plan);
+  } catch (error) {
+    // Quoting a guessed rate would be worse than refusing: the buyer would be
+    // charged an amount nobody can justify afterwards.
+    console.error("[api/checkout] no se pudo obtener la TRM:", error);
+    throw new ApiError(
+      503,
+      "fx_unavailable",
+      "No pudimos consultar la tasa de cambio oficial. Inténtalo en unos minutos.",
+    );
+  }
+
+  const reference = buildReference(plan.slug);
+  const origin = publicEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
   const payload = {
-    reference: buildReference(plan.slug),
+    reference,
     plan: {
       slug: plan.slug,
       name: plan.name,
-      amount: plan.price,
-      currency: "USD",
+      listPriceUsd: plan.price,
       // A one-off setup fee must not reach the provider as a subscription.
       interval: plan.billing === "monthly" ? "month" : "one_time",
+    },
+    charge: {
+      currency: "COP",
+      subtotal: price.subtotalCop,
+      iva: price.ivaCop,
+      total: price.totalCop,
+      // The monthly figure is locked at signup and never recalculated, so it
+      // has to travel with the order for whoever bills the following cycles.
+      lockedMonthly: price.recurring,
+    },
+    fx: {
+      source: "TRM · Superintendencia Financiera",
+      trm: price.conversion.trm.rate,
+      validFrom: price.conversion.trm.from,
+      validTo: price.conversion.trm.to,
+      spreadPercent: price.conversion.spreadPercent,
+      effectiveRate: price.conversion.effectiveRate,
     },
     paymentMethod: order.paymentMethod,
     billing: order.billing,
   };
 
+  // Mirror the order to whatever CRM or billing hook is configured. This is
+  // bookkeeping, not the payment: it must never block the buyer from paying.
   const { CHECKOUT_ENDPOINT } = getServerEnv();
-
   if (CHECKOUT_ENDPOINT) {
-    const upstream = await fetch(CHECKOUT_ENDPOINT, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!upstream.ok) {
-      throw new ApiError(502, "upstream_error", "No pudimos registrar la contratación.");
+    try {
+      await fetch(CHECKOUT_ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error("[api/checkout] no se pudo espejar la orden:", error);
     }
   } else {
-    // No upstream configured — log server-side so the flow is testable as-is.
-    console.log("[api/checkout] order:", payload);
+    console.log("[api/checkout] orden:", payload);
   }
 
-  return { reference: payload.reference, nextStep: NEXT_STEP[order.paymentMethod] };
+  const wompi = getWompiConfig();
+  if (!wompi) {
+    // Keys not configured yet — say so plainly instead of pretending the order
+    // went through, which is exactly what the old "solicitud registrada" did.
+    throw new ApiError(
+      503,
+      "gateway_unconfigured",
+      "La pasarela de pagos todavía no está configurada en este entorno.",
+    );
+  }
+
+  const link = buildCheckoutLink({
+    config: wompi,
+    reference,
+    amountInCents: price.totalCents,
+    email: order.billing.email,
+    fullName: order.billing.contactName,
+    phone: order.billing.phone,
+    legalId: order.billing.taxId,
+    legalIdType: order.billing.entity === "company" ? "NIT" : "CC",
+    redirectUrl: `${origin}/checkout/resultado?ref=${encodeURIComponent(reference)}`,
+  });
+
+  return {
+    reference,
+    redirectUrl: link.url,
+    charge: payload.charge,
+    fx: payload.fx,
+  };
 });

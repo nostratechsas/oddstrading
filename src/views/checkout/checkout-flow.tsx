@@ -17,7 +17,7 @@ import { ApiClientError, apiFetch } from "@/lib/api-client";
 import { formatUsd } from "@/utils/format/currency";
 
 import { BillingFields, type BillingData } from "./billing-fields";
-import { OrderSummary } from "./order-summary";
+import { OrderSummary, type FxQuote } from "./order-summary";
 import { PaymentPicker } from "./payment-picker";
 import { PlanPicker } from "./plan-picker";
 
@@ -28,11 +28,14 @@ export interface CheckoutFlowProps {
   initialPlan: string;
   /** Suffix per billing cadence, shared with the pricing section. */
   billingLabels: Record<Billing, string>;
+  /** Day's official rate, resolved on the server. Null when unreachable. */
+  fx: FxQuote | null;
 }
 
 interface CheckoutResult {
   reference: string;
-  nextStep: string;
+  /** Wompi's hosted checkout, already signed. */
+  redirectUrl: string;
 }
 
 const EMPTY_BILLING: BillingData = {
@@ -82,6 +85,7 @@ export const CheckoutFlow = ({
   countries,
   initialPlan,
   billingLabels,
+  fx,
 }: CheckoutFlowProps) => {
   const [planSlug, setPlanSlug] = useState(initialPlan);
   const [billing, setBilling] = useState<BillingData>(EMPTY_BILLING);
@@ -121,29 +125,15 @@ export const CheckoutFlow = ({
         method: "POST",
         body: JSON.stringify({ plan: plan.slug, paymentMethod: method, billing }),
       });
-      setResult(data);
-      setStatus("done");
+      // Straight to the gateway. `status` stays "sending" on purpose: the
+      // button must not go idle while the browser is navigating away, or a
+      // double click would open two orders.
+      window.location.assign(data.redirectUrl);
     } catch (error) {
       setFailure(error instanceof ApiClientError ? error.message : content.done.failure);
       setStatus("error");
     }
   };
-
-  if (status === "done" && result) {
-    return (
-      <Bezel glow innerClassName="flex flex-col items-start gap-4 p-9">
-        <h2 className="text-2xl font-normal tracking-tight">{content.done.title}</h2>
-        <p className="max-w-[60ch] text-foreground-muted">
-          {content.done.referencePrefix}{" "}
-          <b className="font-normal text-accent-emphasis">{result.reference}</b>. {result.nextStep}
-        </p>
-        <p className="text-sm text-foreground-subtle">
-          {content.done.copySuffix} {billing.email}. {plan.name} · USD {formatUsd(plan.price)}{" "}
-          {billingLabels[plan.billing]}.
-        </p>
-      </Bezel>
-    );
-  }
 
   return (
     <form
@@ -185,7 +175,12 @@ export const CheckoutFlow = ({
       </div>
 
       <div className="lg:sticky lg:top-28 lg:h-fit">
-        <OrderSummary labels={content.summary} plan={plan} guarantees={content.guarantees}>
+        <OrderSummary
+          labels={content.summary}
+          plan={plan}
+          guarantees={content.guarantees}
+          fx={fx}
+        >
           <button
             type="submit"
             disabled={status === "sending"}
