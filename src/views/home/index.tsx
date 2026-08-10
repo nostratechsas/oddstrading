@@ -11,10 +11,11 @@ import { brand } from "@/data/content/shapes";
 import { getBookmakerLogo } from "@/utils/assets/bookmaker-logos";
 
 import { BookmakerMarquee } from "./bookmaker-marquee";
+import { ShowcaseSection } from "./showcase-section";
 import { CoverageSection } from "./coverage-section";
 import { CtaSection } from "./cta-section";
 import { FaqSection } from "./faq-section";
-import { Hero } from "./hero";
+import { Hero, VIDEO_SRC } from "./hero";
 import { IntegrationSection } from "./integration-section";
 import { PlatformSection } from "./platform-section";
 import { PricingSection } from "./pricing-section";
@@ -53,6 +54,12 @@ export const HomeView = ({ content }: HomeViewProps) => {
         <Hero content={content} />
         <BookmakerMarquee items={wall} label={content.wall.label} />
         <StatsBand stats={content.stats} label={content.statsLabel} />
+        <ShowcaseSection
+          content={content.showcase}
+          base={content.base}
+          email={brand.email}
+          videoSrc={VIDEO_SRC}
+        />
         <PlatformSection content={content.platform} />
         <CoverageSection content={content.coverage} />
         <IntegrationSection content={content.integration} samples={content.codeSamples} />

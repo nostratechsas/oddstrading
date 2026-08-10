@@ -77,6 +77,40 @@ export const es = {
 
   wall: { label: "Casas de apuestas integradas" },
 
+  showcase: {
+    headline: "Una sola integración,",
+    headlineAccent: "todo el mercado.",
+    lede: "OddsTrading recoge la línea de cada operador, la normaliza a un mismo esquema y te la entrega en tiempo real. Tu equipo consume un único contrato de datos en lugar de mantener una integración por casa.",
+    cta: "Empezar el demo",
+    pipeline: {
+      label: "Cómo llega el dato",
+      steps: [
+        { index: "01", title: "Publica", detail: "La casa mueve la línea" },
+        { index: "02", title: "Normaliza", detail: "Un esquema, un event_id" },
+        { index: "03", title: "Entrega", detail: "REST y WebSocket" },
+      ],
+    },
+    quote: {
+      label: "Por qué importa",
+      body: "La diferencia entre una casa y otra en el mismo mercado es de décimas. Sin verlas juntas y al mismo tiempo, esa ventaja sencillamente no existe.",
+      author: "El problema que resolvemos",
+      role: "Comparación de líneas en tiempo real",
+    },
+    metric: {
+      value: "14M+",
+      caption: "Cuotas procesadas al día",
+    },
+    stack: {
+      label: "En tu stack",
+      marqueeLabel: "Tecnologías con las que se integra el feed",
+    },
+    contact: {
+      label: "Escríbenos",
+      site: "oddstradingview.com",
+      linkLabel: "Ir al formulario de contacto",
+    },
+  },
+
   stats: [
     { value: 190, suffix: "+", label: "Casas de apuestas" },
     { value: 38, label: "Deportes cubiertos" },

@@ -54,9 +54,19 @@ See [[smooth-scroll]] and [[data-flow]].
 
 ## Misc
 
-No miscellaneous runtime dependencies. Cookie consent is an in-house component
+| Package | Version | Why |
+|---------|---------|-----|
+| `lucide-react` | `^1.31.0` | Icon set for the showcase band. Tree-shakes per import, so only the icons actually used ship. |
+
+Everything else is in-house. Cookie consent is our own component
 (`src/components/common/Cookie/`) built on Zustand + `@react-spring/web` — the
 former `react-cookie-consent` package was removed. See [[components/common]].
+
+> [!note] Two icon approaches coexist, on purpose
+> `views/home/card-icon.tsx` hand-rolls its SVGs because those glyphs are
+> bespoke to the platform bento. The showcase band uses Lucide because it needs
+> a dozen generic developer-tooling marks that are not worth drawing. Reach for
+> `card-icon` when the glyph carries meaning, Lucide when it is texture.
 
 ## Tooling
 

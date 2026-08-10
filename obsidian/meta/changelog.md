@@ -8,6 +8,33 @@ updated: 2026-07-29
 Chronological log of notable changes to the project. Newest first.
 This is a human-curated log — not a mirror of `git log`.
 
+## 2026-08-09 (showcase band)
+
+A full-width dark bento between the stats and the platform section, adapted from
+a dark portfolio layout. Four things in the source design could not be copied and
+were rebuilt — see [[decisions-log]] ADR-0023.
+
+- **`ShowcaseSection`** — header plus a three-column grid: the price pipeline
+  over the brand film, a "why it matters" plate, the 14M+ figure, the stack
+  marquee and a contact card.
+- **`ShowcaseMarquee`** — two rows of glass tiles drifting in opposite
+  directions on an infinite `useSpring` loop. The source used
+  `@keyframes marquee-left/right`, which hard rule #1 bans.
+- **`--showcase-*` tokens** — the band is dark on both themes by design.
+- **`.liquid-glass` and `.noise-overlay`** join `.tick-marker` in
+  `@layer components` as ADR-0012 exceptions: a masked gradient border and an
+  SVG turbulence grain are not expressible as utilities.
+- **New dependency: `lucide-react`.** Tree-shakes per import. Recorded in
+  [[tech-stack]] along with when to use it instead of `card-icon`.
+
+> [!note] What the source design offered and we did not take
+> Three CloudFront video URLs from a third party's account, and a named client
+> testimonial. The videos are neither ours nor licensed to us, so the band reuses
+> `portada.mp4` and brand gradients. The quote card carries a factual statement
+> about the problem instead of an invented customer — a fabricated testimonial on
+> a commercial page is not a design detail, it is a false claim. Swap in a real
+> quote and attribution when there is one; it is a content change, nothing more.
+
 ## 2026-07-29 (pricing pushes Pro)
 
 The tiers were three near-identical cards distinguished only by feature-list

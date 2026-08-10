@@ -10,6 +10,48 @@ consequences. Use [[templates/adr-note]] for new entries. Newest first.
 
 ---
 
+## ADR-0023 — The showcase band is always dark, in both themes
+
+- **Status:** Accepted
+- **Date:** 2026-08-09
+
+**Context.** The showcase band was adapted from a dark portfolio layout. Its
+whole visual language depends on a dark canvas: the glass tiles are a gradient
+*border* that fades at the sides, the video cards are composited, and the
+slate-teal plates only read as plates against near-black. On the light theme
+every one of those effects collapses — a white-on-white ring, a washed video,
+a plate that looks like a bruise.
+
+**Decision.** The band keeps its own palette, declared once as `--showcase-*`
+and **never overridden** under `data-theme="dark"`. It is dark on paper and dark
+on ink. This is the same move `--logo-plate` already makes for the mirror-image
+reason: bookmaker logos are dark-on-transparent, so their chip is light in both
+themes.
+
+**Consequences.**
+- Anything inside the band takes its colour from `--showcase-*`, not from
+  `--foreground` / `--background`. Using the page tokens there will look correct
+  on one theme and broken on the other.
+- Two CSS classes live in `@layer components` as genuine [[decisions-log#ADR-0012 — Styling lives in utilities and components, not `globals.css`|ADR-0012]]
+  exceptions: `.liquid-glass`, whose fading gradient border needs a
+  padding-box/border-box mask composite, and `.noise-overlay`, whose grain is an
+  inline SVG turbulence filter. Neither is expressible as a utility.
+- The reference used `@keyframes` for its two marquee rows. Hard rule #1 bans
+  them, so the rows run on an infinite `useSpring` loop instead — see
+  `views/home/showcase-marquee.tsx`.
+- The icon rows are declared **inside** the client component. Icons are React
+  component functions, and a Server Component cannot pass a function across the
+  boundary; doing so fails the build, not just at runtime.
+- The reference band is `lg:h-screen`. Ours takes its natural height: a forced
+  full-viewport block in the middle of a ten-section landing reads as a dead
+  stop, not a showcase.
+
+## Related
+
+[[design-system]] · [[components/ui]]
+
+---
+
 ## ADR-0022 — 21st.dev components are ported to springs, never installed
 
 - **Status:** Accepted

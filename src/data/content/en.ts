@@ -67,6 +67,40 @@ export const en: SiteContent = {
 
   wall: { label: "Integrated bookmakers" },
 
+  showcase: {
+    headline: "One integration,",
+    headlineAccent: "the whole market.",
+    lede: "OddsTrading picks up every operator's line, normalises it to one schema and delivers it in real time. Your team consumes a single data contract instead of maintaining one integration per book.",
+    cta: "Start the demo",
+    pipeline: {
+      label: "How the price travels",
+      steps: [
+        { index: "01", title: "Published", detail: "The book moves its line" },
+        { index: "02", title: "Normalised", detail: "One schema, one event_id" },
+        { index: "03", title: "Delivered", detail: "REST and WebSocket" },
+      ],
+    },
+    quote: {
+      label: "Why it matters",
+      body: "The gap between one book and another on the same market is a matter of decimals. Without seeing them side by side, at the same moment, that edge simply does not exist.",
+      author: "The problem we solve",
+      role: "Real-time line comparison",
+    },
+    metric: {
+      value: "14M+",
+      caption: "Odds processed every day",
+    },
+    stack: {
+      label: "In your stack",
+      marqueeLabel: "Technologies the feed integrates with",
+    },
+    contact: {
+      label: "Reach us",
+      site: "oddstradingview.com",
+      linkLabel: "Go to the contact form",
+    },
+  },
+
   stats: [
     { value: 190, suffix: "+", label: "Bookmakers" },
     { value: 38, label: "Sports covered" },

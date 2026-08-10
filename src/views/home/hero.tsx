@@ -17,7 +17,8 @@ export interface HeroProps {
   content: SiteContent;
 }
 
-const VIDEO_SRC = "/assets/hero/portada.mp4";
+/** The brand cover film. Exported because the showcase band reuses it. */
+export const VIDEO_SRC = "/assets/hero/portada.mp4";
 
 export const Hero = ({ content }: HeroProps) => {
   const { hero, board, base } = content;
