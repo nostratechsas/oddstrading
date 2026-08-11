@@ -21,15 +21,11 @@ import { appUrl } from "@/lib/site";
 
 export interface CheckoutResultViewProps {
   content: SiteContent;
+  /** ePayco's `ref_payco`, the code the buyer quotes to support. */
   reference?: string;
-  transactionId?: string;
 }
 
-export const CheckoutResultView = ({
-  content,
-  reference,
-  transactionId,
-}: CheckoutResultViewProps) => {
+export const CheckoutResultView = ({ content, reference }: CheckoutResultViewProps) => {
   const copy = content.checkout.result;
 
   return (
@@ -62,12 +58,6 @@ export const CheckoutResultView = ({
                   <dt className="text-foreground-subtle">{copy.referenceLabel}</dt>
                   <dd className="font-medium text-accent-emphasis tabular-nums">{reference}</dd>
                 </div>
-                {transactionId && (
-                  <div className="flex flex-wrap gap-2">
-                    <dt className="text-foreground-subtle">{copy.transactionLabel}</dt>
-                    <dd className="font-medium tabular-nums">{transactionId}</dd>
-                  </div>
-                )}
               </dl>
             )}
 

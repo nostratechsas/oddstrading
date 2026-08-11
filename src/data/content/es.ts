@@ -357,7 +357,7 @@ export const es = {
     ],
     planLegend: "Elige tu plan",
     guarantees: [
-      "Pago seguro con Wompi · Bancolombia",
+      "Pago seguro con ePayco",
       "Factura electrónica con IVA discriminado",
       "Precio en pesos fijo de por vida",
       "Cancelas cuando quieras",
@@ -388,8 +388,7 @@ export const es = {
       headline: "Volviste de la pasarela.",
       headlineMuted: "Ya casi.",
       body: "Estamos confirmando el pago con la pasarela. En cuanto quede acreditado te llega el correo con la factura electrónica y las credenciales del panel.",
-      referenceLabel: "Referencia:",
-      transactionLabel: "Transacción:",
+      referenceLabel: "Referencia ePayco:",
       backHome: "Volver al inicio",
       mailSubject: "Consulta sobre mi pago —",
       note: "Esta pantalla confirma que volviste de la pasarela, no que el cobro se haya aprobado: eso lo confirma la pasarela directamente con nosotros. Si en 15 minutos no recibes el correo, escríbenos con tu referencia.",

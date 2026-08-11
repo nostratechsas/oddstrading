@@ -3,22 +3,22 @@ import { z } from "zod";
 import { getServerEnv, publicEnv } from "@/env";
 import { en } from "@/data/content/en";
 import { ApiError, handle } from "@/lib/api";
+import { buildCheckoutForm, buildInvoice, getEpaycoConfig } from "@/lib/epayco";
 import { priceInCop } from "@/lib/pricing";
-import { buildCheckoutLink, buildReference, getWompiConfig } from "@/lib/wompi";
 
 /**
  * Order intake for the checkout flow.
  *
- * This route **prices the order and hands back a payment link**. It does not
- * register a request for someone to follow up on: the buyer lands on Wompi's
- * hosted page and pays there.
+ * This route **prices the order and hands back a signed payment form**. It does
+ * not register a request for someone to follow up on: the browser posts that
+ * form to ePayco and the buyer pays there.
  *
  * Everything that decides the amount happens here, never in the browser: the
  * plan comes from the catalogue, the peso figure from the day's TRM, the tax
  * from a constant, and the integrity signature is computed server-side. A
  * crafted payload cannot set its own total.
  *
- * Card data never touches this app. Capture belongs to Wompi's hosted page,
+ * Card data never touches this app. Capture belongs to ePayco's hosted page,
  * which is what keeps this out of PCI-DSS scope.
  */
 
@@ -71,11 +71,11 @@ export const POST = handle(async (req) => {
     );
   }
 
-  const reference = buildReference(plan.slug);
+  const invoice = buildInvoice(plan.slug);
   const origin = publicEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const payload = {
-    reference,
+    reference: invoice,
     plan: {
       slug: plan.slug,
       name: plan.name,
@@ -121,8 +121,8 @@ export const POST = handle(async (req) => {
     console.log("[api/checkout] orden:", payload);
   }
 
-  const wompi = getWompiConfig();
-  if (!wompi) {
+  const epayco = getEpaycoConfig();
+  if (!epayco) {
     // Keys not configured yet — say so plainly instead of pretending the order
     // went through, which is exactly what the old "solicitud registrada" did.
     throw new ApiError(
@@ -132,21 +132,23 @@ export const POST = handle(async (req) => {
     );
   }
 
-  const link = buildCheckoutLink({
-    config: wompi,
-    reference,
-    amountInCents: price.totalCents,
+  const form = buildCheckoutForm({
+    config: epayco,
+    invoice,
+    description: `OddsTrading · plan ${plan.name}`,
+    totalCop: price.totalCop,
+    subtotalCop: price.subtotalCop,
+    ivaCop: price.ivaCop,
     email: order.billing.email,
-    fullName: order.billing.contactName,
-    phone: order.billing.phone,
-    legalId: order.billing.taxId,
-    legalIdType: order.billing.entity === "company" ? "NIT" : "CC",
-    redirectUrl: `${origin}/checkout/resultado?ref=${encodeURIComponent(reference)}`,
+    responseUrl: `${origin}/checkout/resultado`,
+    confirmationUrl: `${origin}/api/webhooks/epayco`,
   });
 
   return {
-    reference,
-    redirectUrl: link.url,
+    reference: invoice,
+    // The browser posts this; the signature travels inside it, so the amount
+    // cannot be edited on the way.
+    checkout: { action: form.action, fields: form.fields },
     charge: payload.charge,
     fx: payload.fx,
   };

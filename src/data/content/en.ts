@@ -347,7 +347,7 @@ export const en: SiteContent = {
     ],
     planLegend: "Choose your plan",
     guarantees: [
-      "Secure payment with Wompi · Bancolombia",
+      "Secure payment with ePayco",
       "Electronic invoice with VAT itemised",
       "Peso price fixed for life",
       "Cancel whenever you want",
@@ -376,8 +376,7 @@ export const en: SiteContent = {
       headline: "You're back from the gateway.",
       headlineMuted: "Almost there.",
       body: "We're confirming the payment with the gateway. As soon as it clears you'll get an email with the electronic invoice and your dashboard credentials.",
-      referenceLabel: "Reference:",
-      transactionLabel: "Transaction:",
+      referenceLabel: "ePayco reference:",
       backHome: "Back to home",
       mailSubject: "Question about my payment —",
       note: "This screen confirms you came back from the gateway, not that the charge was approved: the gateway confirms that with us directly. If no email arrives within 15 minutes, write to us with your reference.",

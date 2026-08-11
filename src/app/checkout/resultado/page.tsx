@@ -11,8 +11,10 @@ export const metadata: Metadata = {
 export default async function CheckoutResult({
   searchParams,
 }: {
-  searchParams: Promise<{ ref?: string; id?: string }>;
+  searchParams: Promise<{ ref_payco?: string; ref?: string }>;
 }) {
-  const { ref, id } = await searchParams;
-  return <CheckoutResultView content={en} reference={ref} transactionId={id} />;
+  // ePayco returns the buyer with `ref_payco`; `ref` is kept so a link built by
+  // hand, or by an earlier version, still resolves.
+  const params = await searchParams;
+  return <CheckoutResultView content={en} reference={params.ref_payco ?? params.ref} />;
 }

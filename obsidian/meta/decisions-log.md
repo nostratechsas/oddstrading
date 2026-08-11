@@ -10,7 +10,7 @@ consequences. Use [[templates/adr-note]] for new entries. Newest first.
 
 ---
 
-## ADR-0024 — The checkout charges through Wompi, in pesos, at the TRM
+## ADR-0024 — The checkout charges through ePayco, in pesos, at the TRM
 
 - **Status:** Accepted
 - **Date:** 2026-08-09
@@ -19,10 +19,18 @@ consequences. Use [[templates/adr-note]] for new entries. Newest first.
 registrada" with a reference. Nothing was ever charged. Prices are published in
 USD, but the money has to land in COP in a Colombian account.
 
-**Decision.** `/api/checkout` prices the order and returns a signed Wompi Web
-Checkout link; the browser goes straight there. Wompi is Bancolombia's gateway —
-it charges COP and settles to a Colombian bank account, which is the constraint
-that ruled out Stripe (not an acquirer in Colombia).
+**Decision.** `/api/checkout` prices the order and returns a **signed form**; the
+browser posts it to ePayco and pays there. ePayco charges COP and settles to a
+Colombian bank account, which is the constraint that ruled out Stripe (not an
+acquirer in Colombia).
+
+> [!warning] ePayco uses two different signatures, and they are not interchangeable
+> The request is **MD5** over `custId ^ pKey ^ invoice ^ amount ^ currency`; the
+> confirmation is **SHA-256** over `custId ^ pKey ^ refPayco ^ transactionId ^
+> amount ^ currency`. Both are caret-separated. Taken from ePayco's own plugin
+> source rather than from memory, and checked against independently computed
+> digests in a throwaway script — including that a confirmation replayed with a
+> tampered amount is rejected.
 
 - The USD list price is converted at the **TRM**, the rate certified daily by the
   Superintendencia Financiera, read from its open-data feed and cached until the
@@ -31,16 +39,21 @@ that ruled out Stripe (not an acquirer in Colombia).
 - The peso amount for the recurring tier is **locked at signup and never
   recalculated**. A monthly charge that silently changes size is both a support
   problem and, if unannounced, a consumer one.
-- Card data never reaches this app. Capture belongs to Wompi's hosted page,
+- Card data never reaches this app. Capture belongs to ePayco's hosted page,
   which keeps us out of PCI-DSS scope.
+- `EPAYCO_TEST` treats **anything other than the literal `"false"` as sandbox**.
+  A misconfiguration should fail towards not charging real cards.
 
 **Consequences.**
 - Everything that decides an amount happens server-side: the plan from the
   catalogue, the rate from the TRM, the tax from a constant, and the integrity
   signature from the merchant secret. A crafted payload cannot set its own total.
-- **The webhook is the only proof of payment.** The redirect back is a browser
-  navigation anyone can type; `/checkout/resultado` therefore says the payment is
-  *being confirmed*, never that it succeeded.
+- **The confirmation URL is the only proof of payment.** The response page the
+  buyer lands on is a browser navigation anyone can type; `/checkout/resultado`
+  therefore says the payment is *being confirmed*, never that it succeeded.
+- The confirmation endpoint answers 200 once it has accepted an event, even if
+  the downstream mirror failed — ePayco retries on anything else, and retrying
+  because our CRM was down would double-count the payment.
 - If the TRM cannot be reached the checkout **fails with 503** rather than
   quoting a guessed rate. An amount nobody can justify afterwards is worse than a
   retry.

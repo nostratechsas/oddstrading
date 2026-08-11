@@ -34,8 +34,34 @@ export interface CheckoutFlowProps {
 
 interface CheckoutResult {
   reference: string;
-  /** Wompi's hosted checkout, already signed. */
-  redirectUrl: string;
+  /** ePayco's hosted checkout: a signed form, posted by the browser. */
+  checkout: { action: string; fields: Record<string, string> };
+}
+
+/**
+ * Posts the signed form to the gateway.
+ *
+ * ePayco takes a form POST, not a query string, so the fields are written into
+ * a throwaway form and submitted. Building it here rather than rendering it in
+ * JSX keeps it out of the DOM until the moment it is used — there is nothing
+ * for a stray click or an autofill extension to trip over.
+ */
+function postToGateway({ action, fields }: CheckoutResult["checkout"]) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = action;
+  form.style.display = "none";
+
+  for (const [name, value] of Object.entries(fields)) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.append(input);
+  }
+
+  document.body.append(form);
+  form.submit();
 }
 
 const EMPTY_BILLING: BillingData = {
@@ -128,7 +154,7 @@ export const CheckoutFlow = ({
       // Straight to the gateway. `status` stays "sending" on purpose: the
       // button must not go idle while the browser is navigating away, or a
       // double click would open two orders.
-      window.location.assign(data.redirectUrl);
+      postToGateway(data.checkout);
     } catch (error) {
       setFailure(error instanceof ApiClientError ? error.message : content.done.failure);
       setStatus("error");
